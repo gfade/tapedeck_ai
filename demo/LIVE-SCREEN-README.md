@@ -2,6 +2,8 @@
 
 This is a running app, not a presentation. Its terminal pane and proof table are updated from actual Runner events, real local Ollama requests, verifier outcomes, and an optional Pharo recovery subprocess. Nothing in the page schedules predetermined pass/fail outcomes.
 
+The current UI uses a terminal-style process stream: monospace output, a shell-style launch line, colored results, selectable scrollback, and a persistent status bar. Expand the verifier and MongoDB sections to inspect detailed evidence. This is a read-only output view, not an arbitrary-command shell. Existing recorded videos retain their original visual layout.
+
 ## Watch
 
 - `presentation/TapeDeck-Live-60s.mp4`: 60-second, narrated 1080p video.
