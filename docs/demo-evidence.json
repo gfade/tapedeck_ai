@@ -1,0 +1,254 @@
+{
+  "capturedAt": "2026-09-26T19:43:30.663Z",
+  "local": {
+    "format": "tapedeck.local-demo/v1",
+    "status": "done",
+    "startedAt": "2026-09-26T19:39:35.235Z",
+    "task": "t01",
+    "hardware": {
+      "platform": "darwin",
+      "architecture": "arm64",
+      "memoryBytes": 25769803776
+    },
+    "ollamaVersion": "0.33.2",
+    "settings": {
+      "contextWindow": 16384,
+      "maxTokens": 2048,
+      "temperature": 0,
+      "seed": 42,
+      "reasoningEffort": "none",
+      "timeoutSeconds": 300
+    },
+    "models": [
+      {
+        "base": "qwen3.5:2b",
+        "alias": "tapedeck-qwen35-2b",
+        "name": "qwen3.5:2b",
+        "model": "qwen3.5:2b",
+        "modified_at": "2026-09-26T15:38:11.400862168-04:00",
+        "size": 2741192820,
+        "digest": "324d162be6ca5629ae4517c8710434d0bd2d665bc94dbad46e9af8fbf8a2f0df",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "2.3B",
+          "quantization_level": "Q8_0",
+          "context_length": 262144,
+          "embedding_length": 2048
+        },
+        "capabilities": [
+          "vision",
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      }
+    ],
+    "results": [
+      {
+        "model": "qwen3.5:2b",
+        "baseline": {
+          "id": "20260926-193935-t01-vanilla-run-199e",
+          "model": "ollama/tapedeck-qwen35-2b",
+          "kind": "run",
+          "variant": "vanilla",
+          "status": "done",
+          "pass": true,
+          "error": null,
+          "durationMs": 7612,
+          "steps": {
+            "replayed": 0,
+            "live": 4,
+            "total": 4
+          },
+          "usage": {
+            "input": 7879,
+            "output": 286,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 8165,
+            "cost": 0
+          },
+          "providerRequests": 4
+        },
+        "comparisonId": "comparison-93c95ef2-2f74-49fa-910e-6e1ece50dedc",
+        "status": "done",
+        "replay": {
+          "id": "20260926-193942-t01-vanilla-replay-83d2",
+          "model": "ollama/tapedeck-qwen35-2b",
+          "kind": "replay",
+          "variant": "vanilla",
+          "status": "done",
+          "pass": null,
+          "error": null,
+          "durationMs": 405,
+          "steps": {
+            "replayed": 4,
+            "live": 0,
+            "total": 4
+          },
+          "usage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0,
+            "cost": 0
+          },
+          "providerRequests": 0
+        },
+        "fork": {
+          "id": "20260926-193943-t01-rule-taskrunner-fork-1b8a",
+          "model": "ollama/tapedeck-qwen35-2b",
+          "kind": "fork",
+          "variant": "rule-taskrunner",
+          "status": "done",
+          "pass": true,
+          "error": null,
+          "durationMs": 6757,
+          "steps": {
+            "replayed": 1,
+            "live": 3,
+            "total": 4
+          },
+          "usage": {
+            "input": 6366,
+            "output": 260,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 6626,
+            "cost": 0
+          },
+          "providerRequests": 3
+        },
+        "rerun": {
+          "id": "20260926-193950-t01-rule-taskrunner-run-d23c",
+          "model": "ollama/tapedeck-qwen35-2b",
+          "kind": "run",
+          "variant": "rule-taskrunner",
+          "status": "done",
+          "pass": true,
+          "error": null,
+          "durationMs": 8403,
+          "steps": {
+            "replayed": 0,
+            "live": 6,
+            "total": 6
+          },
+          "usage": {
+            "input": 13655,
+            "output": 303,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 13958,
+            "cost": 0
+          },
+          "providerRequests": 6
+        },
+        "replayVerified": true
+      }
+    ],
+    "limitations": [
+      "One coding fixture per model, not a general model benchmark.",
+      "Temperature zero and a fixed seed do not guarantee identical inference across runtimes.",
+      "Replay executes no model inference and does not produce a new verifier verdict.",
+      "Local inference has no hosted API charge; wall time includes local computation and task execution.",
+      "Fork skips only the system-prompt comparison to reuse a recorded prefix under an explicitly changed rule.",
+      "Worktrees isolate Git history, not operating-system privileges."
+    ],
+    "finishedAt": "2026-09-26T19:40:00.152Z",
+    "archive": {
+      "files": 76,
+      "gitBundles": 1,
+      "restoredRuns": 4
+    }
+  },
+  "currentImage": {
+    "status": "verified-locally",
+    "verifiedAt": "2026-09-26T19:43:30.634Z",
+    "sha256": "ee68a15cfd75355df9a7a1908a39822a4e217c36f4e8b7775e06497e6cb2b68c",
+    "bytes": 63223960,
+    "runs": 4,
+    "files": 76,
+    "gitBundles": 1,
+    "restoredFileChecksums": 76,
+    "restoredBundleChecksums": 1,
+    "restoreError": null,
+    "uploadedToAtlas": false
+  },
+  "atlas": {
+    "status": "verified",
+    "startedAt": "2026-09-26T18:56:03.371Z",
+    "verifiedAt": "2026-09-26T19:06:14.492Z",
+    "snapshotId": "b185069cbeefb5e464e4523d",
+    "database": "tapedeck",
+    "bucket": "agent_snapshots",
+    "snapshotVisibleInAtlas": true,
+    "checksums": [
+      {
+        "part": "image",
+        "name": "Agent.image",
+        "bytes": 70403944,
+        "sha256": "4ed9a1c282c36840f09ce8e3806e5446edbecd0fe6e11e465f1a0ab5c121ed1c",
+        "matchesSource": true,
+        "matchesManifest": true,
+        "sourceRepresentation": "original file bytes"
+      },
+      {
+        "part": "archive",
+        "name": "archive.json",
+        "bytes": 4279922,
+        "sha256": "110e2f979e492dd289a6d82e2d73c5e078c45779455c5d22893ba9ebe1d04bb3",
+        "matchesSource": true,
+        "matchesManifest": true,
+        "sourceRepresentation": "canonical JSON of Agent.archive.json"
+      },
+      {
+        "part": "changes",
+        "name": "Agent.changes",
+        "bytes": 317663,
+        "sha256": "2bda01df7b0b9faa2c5ab6949270fa39775f961d5b54f0d423f9aabeac763358",
+        "matchesSource": true,
+        "matchesManifest": true,
+        "sourceRepresentation": "original file bytes"
+      },
+      {
+        "part": "sources",
+        "name": "Pharo13.1-64bit-d7c6f76.sources",
+        "bytes": 45283381,
+        "sha256": "4f93dab730de36a49041b8a7e8a4b744a290eed3bf7e19fa18b8bf9ca8e3032a",
+        "matchesSource": true,
+        "matchesManifest": true,
+        "sourceRepresentation": "original file bytes"
+      }
+    ],
+    "embeddedFilesVerified": 491,
+    "gitBundlesVerified": 6,
+    "restoredRuns": 32,
+    "imageReopen": {
+      "status": "passed",
+      "runs": 32,
+      "files": 491,
+      "gitBundles": 6,
+      "restoreError": null,
+      "restoredFileChecksums": 491,
+      "restoredBundleChecksums": 6,
+      "pristineDownloadsUnchanged": true
+    }
+  },
+  "atlasSeparateSnapshot": true,
+  "atlasEvidenceFile": "Prior verified Atlas snapshot; not the new Qwen image. Source: agent-exports/atlas-verification-2026-09-26T18-56-03-371Z/verification.json.",
+  "atlasUploadAttempt": {
+    "status": "blocked",
+    "reason": "The September 26 retry could not connect to Atlas. The new Qwen image is saved and verified locally but is not claimed as uploaded."
+  },
+  "sources": [
+    "https://ollama.com/library/qwen3.5:2b",
+    "https://huggingface.co/Qwen/Qwen3.5-2B",
+    "https://www.mongodb.com/docs/drivers/node/current/crud/gridfs/"
+  ]
+}

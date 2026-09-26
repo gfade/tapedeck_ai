@@ -12,7 +12,9 @@
     "fixtures": "python3 fixtures/make_fixture_store.py fixtures/store",
     "test:image": "bash image/scripts/build-pharo13.sh",
     "test:agent-image": "node --test runner/integration/agent-image.test.ts",
-    "demo": "bash demo/offline-demo.sh"
+    "demo": "bash demo/offline-demo.sh",
+    "demo:local": "node runner/src/local-demo.ts",
+    "demo:local:setup": "node runner/src/local-demo.ts --setup-only"
   },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "0.87.1",
