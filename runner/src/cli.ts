@@ -6,6 +6,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { agentCommand } from "./agent-cli.ts";
 import { loadTasks, loadVariants } from "./bench.ts";
 import { DEFAULT_REPEAT, runGate } from "./gate.ts";
 import { formatGate, formatRuns } from "./report.ts";
@@ -31,6 +32,15 @@ Usage:
   tapedeck ls     [--task T] [--variant V] [--kind run|fork|replay]
   tapedeck tape   <runId>                                     print a run's tape JSON
   tapedeck serve  [--port 4777] [--host 127.0.0.1]            HTTP API and dashboard
+  tapedeck archive --output Agent.archive.json [--home DIR] capture traces, files and Git bundles
+  tapedeck restore --archive FILE --destination DIR        restore into an empty runner store
+  tapedeck atlas-push --image Agent.image [--archive FILE]  publish image + archive to Atlas
+  tapedeck atlas-pull <snapshotId> --destination DIR        retrieve image and restore its files
+  tapedeck atlas-ls                                         list published snapshots
+  tapedeck compare <runId> --variant V --model P/M          replay + live fork + fresh rerun
+  tapedeck git-status --task T                              inspect stored Git checkpoints
+  tapedeck git-export <runId> --destination REPO --branch B [--remote origin] [--push]
+                                                             export to a new branch; push is opt-in
 
 Options:
   --home DIR      store directory (default: $TAPEDECK_HOME or <repo>/store)
@@ -95,6 +105,8 @@ function printRuns(runs: RunRecord[], json: boolean | undefined): void {
 }
 
 async function main(argv: string[]): Promise<number> {
+	const handled = await agentCommand(argv);
+	if (handled !== null) return handled;
 	const { values: flags, positionals } = parseArgs({ args: argv, options: OPTIONS, allowPositionals: true });
 	const [command, ...rest] = positionals;
 	if (flags.help || !command || command === "help") {

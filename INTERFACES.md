@@ -1,5 +1,25 @@
 # TapeDeck interfaces
 
+Agent image persistence adds `tapedeck.archive/v1`, `tapedeck.snapshot/v1`, and
+`tapedeck.comparison/v1` alongside the contracts below. The complete workflow and
+credential boundaries are documented in [`docs/AGENT-IMAGE.md`](docs/AGENT-IMAGE.md).
+
+Additional runner routes:
+
+- `GET /api/agent/archive`: completed trace artifacts, final workspace bytes, task catalogs,
+  and full Git bundles; capture rejects active or changing runs.
+- `POST /api/agent/restore` with `{archive}`: validate and restore into the runner's empty
+  store, never an arbitrary client-supplied destination.
+- `POST /api/comparisons` with `{from, variant, model?, forkAt?, auto?, lenient?}`: strict
+  replay, live fork, and fresh rerun; explicit model or `TAPEDECK_LIVE_MODEL` required.
+- `GET /api/comparisons/<id>`: persisted comparison and full-trace references.
+- `GET /api/git/<task>`: available checkpoint refs, without credential-bearing remote URLs.
+- `POST /api/git/exports` with `{runId, branch, remote?, push?}`: export to the server's
+  configured `TAPEDECK_GIT_DESTINATION`; pushing requires explicit `push: true`.
+
+When `TAPEDECK_API_TOKEN` is configured, every HTTP request requires
+`Authorization: Bearer <token>`. Tokens are supplied at runtime, not stored in an agent image.
+
 This file is the contract between the three parts of TapeDeck. Anything that crosses a
 boundary (a file, an environment variable, an HTTP call) is defined here. If code and this
 file disagree, fix one of them in the same change.

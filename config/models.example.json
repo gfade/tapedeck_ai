@@ -1,0 +1,19 @@
+{
+  "providers": {
+    "live": {
+      "baseUrl": "https://REPLACE_API_HOST/v1",
+      "api": "openai-completions",
+      "apiKey": "${LIVE_API_KEY}",
+      "models": [
+        {
+          "id": "REPLACE_MODEL_ID",
+          "name": "Configured live model",
+          "reasoning": false,
+          "input": ["text"],
+          "contextWindow": 32000,
+          "maxTokens": 4096
+        }
+      ]
+    }
+  }
+}

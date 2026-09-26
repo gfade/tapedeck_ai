@@ -52,7 +52,9 @@ TdRunnerClient class >> default: aClient during: aBlock [
 { #category : 'accessing' }
 TdRunnerClient class >> defaultBaseUrl [
 
-	^ 'http://127.0.0.1:4777'
+	^ Smalltalk os environment
+		  at: 'TAPEDECK_RUNNER_URL'
+		  ifAbsent: [ 'http://127.0.0.1:4777' ]
 ]
 
 { #category : 'accessing' }
@@ -77,19 +79,43 @@ TdRunnerClient >> baseUrl [
 { #category : 'accessing' }
 TdRunnerClient >> baseUrl: aString [
 
+	((aString includes: $@) or: [ (aString includes: $?) or: [ aString includes: $# ] ]) ifTrue: [
+		TdRunnerError new signal: 'Runner URL must not contain credentials, query parameters or fragments; use TAPEDECK_API_TOKEN instead' ].
 	baseUrl := (aString endsWith: '/')
 		           ifTrue: [ aString allButLast ]
 		           ifFalse: [ aString ]
+]
+
+{ #category : 'reports' }
+TdRunnerClient >> compareRun: aRunOrId variant: aVariantOrName model: aModelOrNil [
+
+	| body |
+	body := self forkBodyFor: aRunOrId variant: aVariantOrName.
+	aModelOrNil ifNotNil: [ body at: 'model' put: aModelOrNil ].
+	^ self post: #( 'comparisons' ) json: body
+]
+
+{ #category : 'runs' }
+TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName model: aModelOrNil [
+
+	^ self forkRun: aRunOrId variant: aVariantOrName at: 1 lenient: nil model: aModelOrNil
 ]
 
 { #category : 'runs' }
 TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName at: aStepOrIndex lenient: aCollectionOrNil [
 	"Fork a run: replay its tape with the variant, restore the workspace at the step and continue live (POST /api/forks)."
 
+	^ self forkRun: aRunOrId variant: aVariantOrName at: aStepOrIndex lenient: aCollectionOrNil model: nil
+]
+
+{ #category : 'runs' }
+TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName at: aStepOrIndex lenient: aCollectionOrNil model: aModelOrNil [
+
 	| body |
 	body := self forkBodyFor: aRunOrId variant: aVariantOrName.
 	aStepOrIndex ifNotNil: [ body at: 'forkAt' put: (self indexOf: aStepOrIndex) ].
 	aCollectionOrNil ifNotNil: [ body at: 'lenient' put: aCollectionOrNil asArray ].
+	aModelOrNil ifNotNil: [ body at: 'model' put: aModelOrNil ].
 	^ self runFrom: (self post: #( 'forks' ) json: body)
 ]
 
@@ -97,9 +123,16 @@ TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName at: aStepOrIndex len
 TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName auto: aBoolean [
 	"Fork a run where the variant's fork rule says (auto: true)."
 
+	^ self forkRun: aRunOrId variant: aVariantOrName auto: aBoolean model: nil
+]
+
+{ #category : 'runs' }
+TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName auto: aBoolean model: aModelOrNil [
+
 	| body |
 	body := self forkBodyFor: aRunOrId variant: aVariantOrName.
 	body at: 'auto' put: aBoolean.
+	aModelOrNil ifNotNil: [ body at: 'model' put: aModelOrNil ].
 	^ self runFrom: (self post: #( 'forks' ) json: body)
 ]
 
@@ -107,9 +140,16 @@ TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName auto: aBoolean [
 TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName tape: aTape [
 	"Fork from an edited tape: it goes live where the replay first diverges from the tape."
 
+	^ self forkRun: aRunOrId variant: aVariantOrName tape: aTape model: nil
+]
+
+{ #category : 'runs' }
+TdRunnerClient >> forkRun: aRunOrId variant: aVariantOrName tape: aTape model: aModelOrNil [
+
 	| body |
 	body := self forkBodyFor: aRunOrId variant: aVariantOrName.
 	body at: 'tape' put: aTape asDictionary.
+	aModelOrNil ifNotNil: [ body at: 'model' put: aModelOrNil ].
 	^ self runFrom: (self post: #( 'forks' ) json: body)
 ]
 
@@ -192,7 +232,7 @@ TdRunnerClient >> indexOf: aStepOrIndex [
 TdRunnerClient >> initialize [
 
 	super initialize.
-	baseUrl := self class defaultBaseUrl.
+	self baseUrl: self class defaultBaseUrl.
 	timeout := 600
 ]
 
@@ -254,10 +294,13 @@ TdRunnerClient >> reports [
 TdRunnerClient >> request: aBlock [
 	"Run one HTTP exchange; answer the response body as text, or signal TdRunnerError."
 
-	| client |
+	| client token |
 	client := ZnClient new.
 	^ [
 	  client timeout: timeout.
+	  token := Smalltalk os environment at: 'TAPEDECK_API_TOKEN' ifAbsent: [ nil ].
+	  token ifNotNil: [
+		  token isEmpty ifFalse: [ client headerAt: 'Authorization' put: 'Bearer ' , token ] ].
 	  [ aBlock value: client ]
 		  on: NetworkError
 		  do: [ :exception |

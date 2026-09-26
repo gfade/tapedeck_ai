@@ -6,7 +6,7 @@
  */
 
 import { execFileSync, spawn } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,7 +40,7 @@ export function git(cwd: string, ...args: string[]): string {
 
 /** A scratch directory for one test file. */
 export class Scratch {
-	readonly dir = mkdtempSync(join(tmpdir(), "pi-tape-test-"));
+	readonly dir = mkdtempSync(join(realpathSync(tmpdir()), "pi-tape-test-"));
 	private counter = 0;
 
 	path(...parts: string[]): string {

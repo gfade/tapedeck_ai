@@ -45,6 +45,7 @@ export function cleanEnv(): NodeJS.ProcessEnv {
 	const env: NodeJS.ProcessEnv = {};
 	for (const [key, value] of Object.entries(process.env)) {
 		if (key.startsWith("PI_") || key.startsWith("GIT_") || key.startsWith("TAPEDECK_")) continue;
+		if (key.startsWith("MONGODB_")) continue;
 		// Set when the runner itself runs under `node --test`; inherited by a task's own
 		// `node --test`, it makes that run skip every test file and exit 0.
 		if (key === "NODE_TEST_CONTEXT") continue;

@@ -5,10 +5,13 @@
   "description": "Record, replay and fork pi agent sessions; analyze them as live objects in a Pharo image.",
   "type": "module",
   "workspaces": ["pi-tape", "runner"],
-  "engines": { "node": ">=22.18" },
+  "engines": { "node": ">=22.19" },
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "fixtures": "python3 fixtures/make_fixture_store.py fixtures/store",
+    "test:image": "bash image/scripts/build-pharo13.sh",
+    "test:agent-image": "node --test runner/integration/agent-image.test.ts",
     "demo": "bash demo/offline-demo.sh"
   },
   "devDependencies": {

@@ -1,5 +1,11 @@
 # TapeDeck image
 
+For self-contained `Agent.image` capture/reload, embedded workspace files and Git bundles,
+MongoDB Atlas backup, live API comparisons, and Git export, see
+[`../docs/AGENT-IMAGE.md`](../docs/AGENT-IMAGE.md). `TdAgentImage current` is the persistent
+root for that workflow; ordinary `TdStore` imports below retain trace objects but do not
+by themselves embed the workspace files.
+
 The Pharo side of TapeDeck: an analysis lab for pi runs. It imports every run of a runner
 store as live objects (runs, steps, tool calls, harness states, tapes), answers questions
 about them without calling a model, drives the runner to fork and replay runs, serves tapes

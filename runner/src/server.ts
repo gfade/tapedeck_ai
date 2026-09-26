@@ -6,11 +6,15 @@
  * preflight (which this server never approves), so web pages cannot start runs here.
  */
 
+import { timingSafeEqual } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { join } from "node:path";
+import { captureArchive, DEFAULT_ARCHIVE_MAX_BYTES, restoreArchive } from "./archive.ts";
 import { loadTasks, loadVariants, taskSummary } from "./bench.ts";
+import { compareRun } from "./compare.ts";
 import { gateName, type GateRequest, runGate } from "./gate.ts";
+import { exportRunToGit, gitStatus } from "./git-export.ts";
 import { DASHBOARD_HTML, piPackage, RUNNER_VERSION } from "./paths.ts";
 import type { ForkRequest, ReplayRequest, Runner, RunRequest, StartedRun } from "./runs.ts";
 import { readTapeFromSessionFile } from "./tape.ts";
@@ -27,7 +31,7 @@ function sendJson(res: ServerResponse, status: number, value: unknown): void {
 	send(res, status, `${JSON.stringify(value, null, 2)}\n`, "application/json; charset=utf-8");
 }
 
-async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
+async function readBody(req: IncomingMessage, limit = MAX_BODY): Promise<Record<string, unknown>> {
 	if (!(req.headers["content-type"] ?? "").startsWith("application/json")) {
 		throw new UserError("POST bodies must be sent as application/json", 415);
 	}
@@ -35,7 +39,7 @@ async function readBody(req: IncomingMessage): Promise<Record<string, unknown>> 
 	let size = 0;
 	for await (const chunk of req) {
 		size += (chunk as Buffer).length;
-		if (size > MAX_BODY) throw new UserError("request body too large", 413);
+		if (size > limit) throw new UserError("request body too large", 413);
 		chunks.push(chunk as Buffer);
 	}
 	let body: unknown;
@@ -69,6 +73,8 @@ export function createApiServer(runner: Runner, log: (line: string) => void = ()
 	const store = runner.store;
 	/** Gates started with async: true, by report name, until they finish. */
 	const runningGates = new Map<string, Promise<unknown>>();
+	let archiveBusy = false;
+	let comparisonsBusy = 0;
 
 	/** Starts a run; answers when it finishes, or at once with {id, status} when async. */
 	async function respondToRun(res: ServerResponse, body: Record<string, unknown>, started: Promise<StartedRun>): Promise<void> {
@@ -90,9 +96,16 @@ export function createApiServer(runner: Runner, log: (line: string) => void = ()
 	}
 
 	async function route(req: IncomingMessage, res: ServerResponse): Promise<void> {
+		const token = process.env.TAPEDECK_API_TOKEN;
+		if (token) {
+			const expected = Buffer.from(`Bearer ${token}`);
+			const actual = Buffer.from(req.headers.authorization ?? "");
+			if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) throw new UserError("runner authentication required", 401);
+		}
 		const url = new URL(req.url ?? "/", "http://localhost");
 		const parts = url.pathname.split("/").filter(Boolean).map(decodeURIComponent);
 		const method = req.method ?? "GET";
+		if (archiveBusy && method !== "GET") throw new UserError("archive operation in progress", 409);
 		const at = (m: string, ...pattern: string[]) =>
 			method === m && parts.length === pattern.length && pattern.every((p, i) => p.startsWith(":") || p === parts[i]);
 
@@ -105,6 +118,46 @@ export function createApiServer(runner: Runner, log: (line: string) => void = ()
 		}
 		if (at("GET", "api", "tasks")) return sendJson(res, 200, loadTasks().map(taskSummary));
 		if (at("GET", "api", "variants")) return sendJson(res, 200, loadVariants());
+		if (at("GET", "api", "agent", "archive") || at("POST", "api", "agent", "restore")) {
+			if (archiveBusy || comparisonsBusy || runningGates.size) throw new UserError("wait for active operations before capturing or restoring", 409);
+			archiveBusy = true;
+			try {
+				if (method === "GET") return sendJson(res, 200, await captureArchive(store));
+				const body = await readBody(req, DEFAULT_ARCHIVE_MAX_BYTES * 2);
+				const restored = await restoreArchive(body.archive, store.home);
+				return sendJson(res, 200, { restored: true, store: restored.home, runs: restored.listRuns().length });
+			} finally { archiveBusy = false; }
+		}
+		if (at("POST", "api", "comparisons")) {
+			const body = await readBody(req);
+			if (archiveBusy) throw new UserError("archive operation in progress", 409);
+			comparisonsBusy++;
+			try {
+				return sendJson(res, 200, await compareRun(runner, {
+					from: str(body, "from", true) as string,
+					variant: str(body, "variant", true) as string,
+					model: str(body, "model", false), forkAt: body.forkAt as number | undefined,
+					auto: body.auto === true, lenient: strings(body, "lenient"),
+				}));
+			} finally { comparisonsBusy--; }
+		}
+		if (at("GET", "api", "comparisons", ":id")) {
+			if (!isSafeName(parts[2])) throw new UserError("invalid comparison ID");
+			const file = join(store.home, "comparisons", `${parts[2]}.json`);
+			if (!existsSync(file)) throw new UserError("comparison not found", 404);
+			return sendJson(res, 200, JSON.parse(readFileSync(file, "utf8")));
+		}
+		if (at("GET", "api", "git", ":task")) return sendJson(res, 200, await gitStatus(store, parts[2]));
+		if (at("POST", "api", "git", "exports")) {
+			const body = await readBody(req);
+			const destination = process.env.TAPEDECK_GIT_DESTINATION;
+			if (!destination) throw new UserError("set TAPEDECK_GIT_DESTINATION on the runner before exporting", 409);
+			const result = await exportRunToGit(store, {
+				runId: str(body, "runId", true) as string, branch: str(body, "branch", true) as string,
+				destination, remote: str(body, "remote", false) ?? process.env.TAPEDECK_GIT_REMOTE, push: body.push === true,
+			});
+			return sendJson(res, result.status === "push-failed" ? 502 : 200, result);
+		}
 		if (at("GET", "api", "runs")) {
 			const filter = { task: url.searchParams.get("task") ?? undefined, variant: url.searchParams.get("variant") ?? undefined, kind: url.searchParams.get("kind") ?? undefined };
 			return sendJson(res, 200, store.listRuns(filter));

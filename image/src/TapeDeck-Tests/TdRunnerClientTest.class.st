@@ -14,6 +14,22 @@ Class {
 }
 
 { #category : 'stub runner' }
+TdRunnerClientTest >> comparisonDictionary [
+
+	^ OrderedDictionary new
+		  at: 'format' put: 'tapedeck.comparison/v1';
+		  at: 'id' put: 'comparison-stub';
+		  at: 'status' put: 'done';
+		  at: 'baselineRun' put: self baseline id;
+		  at: 'replayRun' put: self replay id;
+		  at: 'forkRun' put: self fork id;
+		  at: 'rerunRun' put: self rerun id;
+		  at: 'model' put: 'scripted/toy';
+		  at: 'variant' put: 'rule-taskrunner';
+		  yourself
+]
+
+{ #category : 'stub runner' }
 TdRunnerClientTest >> json: aValue [
 
 	^ ZnResponse ok: (ZnEntity with: (TdJson toString: aValue) type: ZnMimeType applicationJson)
@@ -64,6 +80,7 @@ TdRunnerClientTest >> respondToPost: aPath [
 	aPath = 'api/forks' ifTrue: [ ^ self json: self fork info ].
 	aPath = 'api/replays' ifTrue: [ ^ self json: self replay info ].
 	aPath = 'api/gate' ifTrue: [ ^ self json: self gateReport ].
+	aPath = 'api/comparisons' ifTrue: [ ^ self json: self comparisonDictionary ].
 	^ self notFound: 'no route ' , aPath
 ]
 
@@ -106,6 +123,111 @@ TdRunnerClientTest >> tearDown [
 
 	stub ifNotNil: [ stub stop ].
 	super tearDown
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testComparePostsExplicitModelAndAnswersTheComparison [
+
+	| comparison body |
+	comparison := client compareRun: self baseline variant: (TdVariant named: 'rule-taskrunner') model: 'scripted/toy'.
+	body := self lastBody.
+	self assert: body size equals: 3.
+	self assert: (body at: 'from') equals: self baseline id.
+	self assert: (body at: 'variant') equals: 'rule-taskrunner'.
+	self assert: (body at: 'model') equals: 'scripted/toy'.
+	self assert: (comparison at: 'format') equals: 'tapedeck.comparison/v1'.
+	self assert: (comparison at: 'replayRun') equals: self replay id.
+	self assert: (comparison at: 'forkRun') equals: self fork id.
+	self assert: (comparison at: 'rerunRun') equals: self rerun id
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testCompareCanDelegateModelSelectionToRunnerEnvironment [
+
+	client compareRun: self baseline id variant: 'rule-taskrunner' model: nil.
+	self assert: self lastBody size equals: 2.
+	self deny: (self lastBody includesKey: 'model')
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testCompareNeedsNoProviderCredentialsOrClientCredentialFields [
+
+	| body |
+	client compareRun: self baseline variant: 'rule-taskrunner' model: 'mock/credential-free'.
+	body := self lastBody.
+	self assert: body keys asSet equals: #( 'from' 'variant' 'model' ) asSet.
+	self assert: TdRunnerClient instVarNames asArray equals: #( 'baseUrl' 'timeout' 'store' )
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testForkOverloadsPostExplicitModelWithoutChangingOldBodies [
+
+	client forkRun: self baseline variant: 'rule-taskrunner' model: 'mock/selected'.
+	self assert: (self lastBody at: 'model') equals: 'mock/selected'.
+	self assert: (self lastBody at: 'forkAt') equals: 1.
+	client forkRun: self baseline variant: 'rule-taskrunner' at: (self baseline stepAt: 4) lenient: #( 'system' ) model: 'mock/selected'.
+	self assert: (self lastBody at: 'model') equals: 'mock/selected'.
+	self assert: (self lastBody at: 'forkAt') equals: 4.
+	self assert: (self lastBody at: 'lenient') equals: #( 'system' ).
+	client forkRun: self baseline variant: 'rule-taskrunner' auto: true model: 'mock/selected'.
+	self assert: (self lastBody at: 'model') equals: 'mock/selected'.
+	self assert: (self lastBody at: 'auto') equals: true.
+	client forkRun: self baseline variant: 'rule-taskrunner' tape: (TdTape fromRun: self baseline) model: 'mock/selected'.
+	self assert: (self lastBody at: 'model') equals: 'mock/selected'.
+	self assert: ((self lastBody at: 'tape') at: 'format') equals: 'tapedeck.tape/v1'.
+	client forkRun: self baseline variant: 'rule-taskrunner' auto: true.
+	self deny: (self lastBody includesKey: 'model').
+	client forkRun: self baseline variant: 'rule-taskrunner' at: 4 lenient: nil.
+	self deny: (self lastBody includesKey: 'model').
+	client forkRun: self baseline variant: 'rule-taskrunner' tape: (TdTape fromRun: self baseline).
+	self deny: (self lastBody includesKey: 'model')
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testAuthenticationIsReadFreshForEachExchange [
+
+	| environment previous |
+	environment := Smalltalk os environment.
+	previous := environment at: 'TAPEDECK_API_TOKEN' ifAbsent: [ nil ].
+	[
+		environment at: 'TAPEDECK_API_TOKEN' put: 'test-token-one'.
+		client health.
+		self assert: (requests last headers at: 'Authorization') equals: 'Bearer test-token-one'.
+		environment at: 'TAPEDECK_API_TOKEN' put: 'test-token-two'.
+		client compareRun: self baseline variant: 'rule-taskrunner' model: 'scripted/toy'.
+		self assert: (requests last headers at: 'Authorization') equals: 'Bearer test-token-two'.
+		self deny: ((TdJson toString: self lastBody) includesSubstring: 'test-token').
+		environment at: 'TAPEDECK_API_TOKEN' put: ''.
+		client health.
+		self deny: (requests last headers includesKey: 'Authorization')
+	] ensure: [
+		previous
+			ifNil: [ environment removeKey: 'TAPEDECK_API_TOKEN' ]
+			ifNotNil: [ environment at: 'TAPEDECK_API_TOKEN' put: previous ] ]
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testRunnerUrlDoesNotPersistInlineCredentials [
+
+	self should: [ client baseUrl: 'http://user:example-password@127.0.0.1:4777' ] raise: TdRunnerError.
+	self should: [ client baseUrl: 'http://127.0.0.1:4777?token=example-token' ] raise: TdRunnerError.
+	self should: [ client baseUrl: 'http://127.0.0.1:4777#example-token' ] raise: TdRunnerError.
+	self deny: (client baseUrl includesSubstring: 'example-')
+]
+
+{ #category : 'tests' }
+TdRunnerClientTest >> testRunnerUrlCanBeConfiguredWithoutProviderCredentials [
+
+	| environment previous |
+	environment := Smalltalk os environment.
+	previous := environment at: 'TAPEDECK_RUNNER_URL' ifAbsent: [ nil ].
+	[
+		environment at: 'TAPEDECK_RUNNER_URL' put: 'http://127.0.0.1:4999'.
+		self assert: TdRunnerClient new baseUrl equals: 'http://127.0.0.1:4999'
+	] ensure: [
+		previous
+			ifNil: [ environment removeKey: 'TAPEDECK_RUNNER_URL' ]
+			ifNotNil: [ environment at: 'TAPEDECK_RUNNER_URL' put: previous ] ]
 ]
 
 { #category : 'tests' }

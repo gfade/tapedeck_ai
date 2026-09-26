@@ -6,3 +6,14 @@ image/*.image
 image/*.changes
 image/*.sources
 .DS_Store
+.env
+.env.*
+!.env.example
+*.image
+*.changes
+*.sources
+*.bundle
+*.archive.json
+*.files/
+config/models.json
+agent-exports/

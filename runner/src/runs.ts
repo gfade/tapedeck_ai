@@ -9,7 +9,7 @@
  * A run always ends with status done or error: failures anywhere are caught and recorded.
  */
 
-import { accessSync, constants, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from "node:fs";
+import { accessSync, constants, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { getTask, getVariant, variantFile } from "./bench.ts";
 import { addWorktree, ensureTaskRepo, removeWorktree } from "./git.ts";
@@ -249,6 +249,12 @@ export class Runner {
 			await addWorktree(store, plan.task.id, workDir, base);
 			worktree = true;
 			mkdirSync(join(runDir, "agent"), { recursive: true });
+			if (process.env.TAPEDECK_MODELS_FILE) {
+				const modelsFile = process.env.TAPEDECK_MODELS_FILE;
+				const models = readJson<unknown>(modelsFile);
+				if (!models || typeof models !== "object" || Array.isArray(models)) throw new UserError("TAPEDECK_MODELS_FILE must contain a models JSON object");
+				copyFileSync(modelsFile, join(runDir, "agent", "models.json"));
+			}
 			const sessionDir = join(runDir, "pi-sessions");
 			mkdirSync(sessionDir, { recursive: true });
 
