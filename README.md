@@ -4,6 +4,16 @@
 
 TapeDeck records a coding agent's work, replays its recorded behavior without new model calls, and forks a session to test a different rule or model. A Pharo `Agent.image` preserves the experiment as live objects together with embedded workspace files and Git checkpoints. MongoDB Atlas stores the image and its companion archive in GridFS.
 
+## 60-second hackathon demo
+
+[![Watch the narrated TapeDeck demo](presentation/TapeDeck-60s-Demo-Poster.png)](presentation/TapeDeck-60s-Demo.mp4)
+
+[Video (1080p, exactly 60 seconds)](presentation/TapeDeck-60s-Demo.mp4) · [Revised pitch deck](presentation/TapeDeck-MongoDB-Hackathon.pptx) · [PDF slides](presentation/TapeDeck-MongoDB-Hackathon.pdf) · [Speaker script](presentation/PITCH-SCRIPT.md)
+
+The six-scene pitch addresses **Technical Demo (35%)**, **Implementation Difficulty (30%)**, **Creativity (15%)**, and **Impact Potential (20%)**. It gives 46 seconds to working proof and implementation: a real Qwen code fix, measured zero-call replay, a live fork, GridFS payloads and snapshot manifests, and checksum-verified image recovery.
+
+The video uses actual captured run/evidence data, formatted and condensed for readability, with disclosed synthetic system narration. Its fresh September 26 capture measures **4 / 0 / 3 / 4** model calls. The older results below remain historical. The Atlas recovery proof uses a separately verified earlier download; the new Qwen image is local because current Atlas connections time out. See [video details and evidence](presentation/README.md).
+
 ## What the demo shows
 
 1. **Real local inference:** Qwen3.5 2B calls tools to fix a small JavaScript bug.

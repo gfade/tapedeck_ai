@@ -1,37 +1,105 @@
-# TapeDeck: 60-second MongoDB hackathon pitch
+# TapeDeck: 60-second hackathon pitch
 
-Five slides. 138 spoken words. Rehearse to the time marks; reference notes are not spoken. The full local experiment runs before the pitch.
+**Six scenes. Exactly 60 seconds. 132 spoken words.** Only the blockquoted narration is spoken; count words by whitespace. `presentation/pitch-plan.json` defines the revised deck and video timeline.
 
-## 1. TapeDeck (0:00–0:10)
+**Evidence lock:** September 26, 2026. The fresh Qwen capture at **19:51 UTC** measures **4 / 0 / 3 / 4** model requests, not the historical 4 / 0 / 3 / 6. The **19:52 UTC** Atlas proof rechecks and reopens an **already-downloaded, different snapshot** offline. The new Qwen upload remains blocked; there is no new cloud transfer.
 
-When a coding agent fails, a chat log is not enough. TapeDeck saves the experiment: its trace, files, and Git checkpoints, ready to reopen.
+**Video disclosure, not spoken:** “Actual terminal captures · edited for time · synthetic system narration.” Show this at the opening and in the video description; retain “Terminal capture · synthetic narration” as a small persistent label. Terminal material must be actual captured output or clearly labeled inspection of saved evidence, never a fake product UI or invented command transcript.
 
-**Reference, not spoken:** Audience: MongoDB hackathon judges. The saved Pharo image contains trace objects and embedded file bytes, not an operating-system snapshot.
+## Rubric and timing
 
-## 2. Real Qwen3.5 2B, zero-call replay (0:10–0:25)
+| Scene | Time | Seconds | Primary criterion | Spoken words |
+| --- | --- | ---: | --- | ---: |
+| 1. Save the experiment | 00:00–00:06 | 6 | Creativity — 15% weight | 14 |
+| 2. Replay: zero calls | 00:06–00:20 | 14 | Technical Demo — 35% weight | 31 |
+| 3. Fork at divergence | 00:20–00:30 | 10 | Implementation Difficulty — 30% weight | 21 |
+| 4. MongoDB stores it | 00:30–00:40 | 10 | Implementation Difficulty — 30% weight | 24 |
+| 5. Reopen the download | 00:40–00:52 | 12 | Technical Demo — 35% weight | 24 |
+| 6. Debug without rerunning | 00:52–01:00 | 8 | Impact Potential — 20% weight | 18 |
+| **Total** | **00:00–01:00** | **60** | **46 seconds of proof/engineering** | **132** |
 
-We ran Qwen three-point-five two-B locally on a coding task. The original run, live fork, and fresh run passed. Strict replay reproduced the trace with zero model calls, measured independently.
+The rubric weights are judging weights, not required screen-time percentages. Technical Demo receives 26 seconds; Implementation Difficulty receives 20: **46/60 seconds, or 76.7%, directly serve the combined 35% + 30% criteria.** Creativity also appears in the executable-image proof; impact appears in zero-inference replay and offline recovery. Do not double-count that secondary coverage.
 
-**Reference, not spoken:** One sum-function fixture on a 24 GiB Apple Silicon Mac. Ollama 0.33.2, Q8_0 weights, 16,384-token context, temperature zero, seed 42. Replay does not rerun the task verifier. Fork reuses one recorded step and explicitly permits a changed system prompt. No general benchmark claim.
+## 1. Save the experiment — 00:00–00:06
 
-## 3. MongoDB Atlas keeps the experiment (0:25–0:40)
+> A failed agent run needs more than chat logs. TapeDeck saves reopenable, executable experiments.
 
-MongoDB Atlas stores the image and companion files in GridFS. A snapshot manifest links their hashes. Download verifies the bytes before restoring the experiment. Reconnect the local model only when you choose a live continuation.
+**On screen:** “Executable agent image” / “MongoDB Atlas + Pharo”.
 
-**Reference, not spoken:** Implemented in runner/src/atlas.ts and archive.ts. Collections: agent_snapshots.files, agent_snapshots.chunks, agent_snapshots_manifests. Manifests publish only after all uploads succeed. Model weights and credentials stay external. No vector-search feature is claimed.
+**Capture direction:** Begin on the genuine sum-function patch or saved-image evidence, with the short MongoDB/Pharo title overlay and disclosure. Failed-agent recovery is the use case, not an invented failure of the passing demo. This is an executable Pharo object graph plus embedded files, not a screenshot, an OS snapshot, or saved model weights. The creative contribution is the experiment-as-image workflow, not a world-first claim.
 
-## 4. Downloaded, reopened, checksum-verified (0:40–0:52)
+**Criterion:** Creativity; secondary Impact Potential.
 
-Atlas recovery is independently verified: four companion hashes matched, and the downloaded image reopened with its files and Git history intact. That earlier snapshot is separate from today’s Qwen run.
+**Evidence/source:** `presentation/demo-capture.json#/localImage`, `#/patch`, and `#/atlas/restored`; `image/src/TapeDeck-Server/TdAgentImage.class.st` — `readArchive:`, `saveAs:`, `startUp:`.
 
-**Reference, not spoken:** Snapshot b185069cbeefb5e464e4523d, verified 2026-09-26T19:06:14.492Z. Separate prior snapshot, not the new Qwen experiment. Every companion hash matches both source and manifest. Every image-materialized file and Git bundle matches its archive digest.
+## 2. Replay: zero calls — 00:06–00:20
 
-## 5. Bring one failing agent run (0:52–1:00)
+> Real local Qwen on a coding task: baseline, four calls; replay, zero; fork, three; fresh run, four. Independently counted. All live verifiers passed. Replay returns recorded behavior, not a new verdict.
 
-Our ask: bring one failing agent run. Recover it, inspect it, then try a live alternative. That is TapeDeck.
+**On screen:** “Qwen 2B · model calls” / “Baseline 4 · Replay 0” / “Fork 3 · Fresh 4”.
 
-**Reference, not spoken:** Prototype boundaries: one controlled coding fixture, not a general benchmark or OS sandbox. Model inference is local. Repository access may require permission.
+**Capture direction:** Give roughly ten seconds to actual captured comparison/replay completion and readable replay-result inspection, including a result hold; use four seconds for the fresh request-count summary. Show `replayVerified: true`, four replayed steps, zero live steps, and zero tokens. The captured command is `local-demo`, not a separately filmed standalone replay command. Detailed counts come from its results and independent gateway log; label formatted projections as recorded evidence.
 
-## Evidence
+**Criterion:** Technical Demo; secondary Impact Potential.
 
-Measured results: `docs/demo-evidence.json`. Presenter walkthrough: `docs/JUDGE-WALKTHROUGH.md`.
+**Evidence/source:** `agent-exports/video-build/recorded-run.json#/events`; `agent-exports/judges-video-demo/results.json#/results/0`; `agent-exports/judges-video-demo/provider-requests.jsonl`; `runner/src/local-demo.ts` — `replayVerified`; `runner/src/local-gateway.ts` — `startLocalGateway`.
+
+**Judge note:** Qwen3.5 2B, one coding fixture. Baseline, live fork, and fresh run passed. Replay has `pass: null`: matching recorded behavior is not a new verifier pass or proof that inference itself is deterministic.
+
+## 3. Fork at divergence — 00:20–00:30
+
+> We intercept requests, record tool outcomes, and checkpoint Git. Divergence stops replay; an explicit fork restores the checkpoint before continuing live.
+
+**On screen:** “Requests + tool outcomes” / “Git checkpoints” / “Fork: 1 replayed + 3 live”.
+
+**Capture direction:** Give about four seconds to actual read/edit/bash tool calls and the patch from `return a - b` to `return a + b`, with brief source context; use six seconds for the fresh fork report. Hold `forkAt: 2`, `kind: forced`, the recorded `restoredSnapshot`, and `action: live`. The provider checks normalized requests; matching wrapped tools return recorded outcomes, including errors, rather than executing again. Git checkpoints provide the workspace restore point.
+
+**Criterion:** Implementation Difficulty; secondary Technical Demo.
+
+**Evidence/source:** `presentation/demo-capture.json#/toolCalls`, `#/patch`, and `#/checkpoints`; `agent-exports/judges-video-demo/results.json#/results/0/fork`; `agent-exports/judges-video-demo/restored-store/runs/20260926-195118-t01-rule-taskrunner-fork-e8b0/tape-report.json`; `pi-tape/extensions/tape.ts` — provider registration; `pi-tape/extensions/tape/controller.ts` — `checkRequest`, `runTool`, `stubResult`, `diverge`; `pi-tape/src/git.ts` — `snapshot`, `restore`.
+
+**Judge note:** This controlled fork reuses one recorded step, explicitly permits the changed system prompt with `lenient: ["system"]`, then continues live for three steps. Do not describe it as strict replay under an unchanged harness.
+
+## 4. MongoDB stores it — 00:30–00:40
+
+> MongoDB GridFS stores checksummed images and their companions in file and chunk collections. Our manifest collection publishes a snapshot only after every upload succeeds.
+
+**On screen:** “GridFS: files + chunks” / “SHA-256 per companion” / “Manifest: publish last”.
+
+**Capture direction:** Spend the full ten seconds inspecting the prior snapshot's saved manifest and the real MongoDB implementation in a terminal. `agent_snapshots.files` holds file metadata, `agent_snapshots.chunks` holds binary chunks, and `agent_snapshots_manifests` links companion IDs, sizes, and SHA-256 hashes. Show the upload loop completing before `putManifest`. These are source-backed architecture and saved cloud evidence, not a live Atlas query.
+
+**Criterion:** Implementation Difficulty; secondary Technical Demo.
+
+**Evidence/source:** `agent-exports/video-build/recorded-atlas-proof.json#/manifest`; `docs/demo-evidence.json#/atlas` for the configured database/bucket and prior cloud verification; `runner/src/atlas.ts` — `GridFSBucket`, `publish`, `putManifest`, `restore`; `runner/test/atlas.test.ts` — publication-order and corrupt-download cases (source references, not newly executed tests).
+
+**Judge note:** TapeDeck computes per-companion checksums while streaming uploads. Download validates size and SHA-256 before publishing the restored directory. This is not a claim that GridFS alone supplies the application checksum protocol or that the multi-file upload is a database transaction.
+
+## 5. Reopen the download — 00:40–00:52
+
+> Pharo preserves objects and files. This earlier Atlas download reopens with four companion hashes verified. Today’s Qwen image is local; its upload remains blocked.
+
+**On screen:** “Prior Atlas · offline reopen” / “32 runs · 491 files · 6 bundles” / “Qwen local: 4 · 76 · 1”. The Qwen shorthand uses the same runs/files/bundles order.
+
+**Capture direction:** Give roughly four seconds to actual companion-hash matches and eight seconds to the recorded reopen and payload-verification results. Hold “IMAGE REOPENED” and “PAYLOADS VERIFIED — 491 file hashes + 6 Git bundle hashes”. Keep “New Atlas upload blocked” visible as a separate status label. The 19:52 UTC capture reports four companion hashes matching the saved manifest and 497 verified embedded payloads.
+
+**Criterion:** Technical Demo; secondary Creativity and Impact Potential.
+
+**Evidence/source:** `agent-exports/video-build/recorded-atlas-proof.json` — `sourceSnapshot`, `liveCloudTransfer: false`, `hashes`, `restored`, `events`; `presentation/demo-capture.json#/localImage`; `agent-exports/judges-video-demo/results.json#/archive`; `image/src/TapeDeck-Server/TdAgentImage.class.st` — `decodedBytes:`, `restoreFilesTo:`, `resume`.
+
+**Judge note:** Prior Atlas snapshot `b185069cbeefb5e464e4523d` is **32/491/6**, not the current Qwen **4/76/1** image. The current Qwen image is independently reopened and verified in `presentation/demo-capture.json`: 77 checked payloads and `uploadedToAtlas: false`. No new upload, download, or cloud connectivity is claimed.
+
+## 6. Debug without rerunning — 00:52–01:00
+
+> Recover, review, and debug failures without repeating inference during replay. Bring one failing run; test a live alternative.
+
+**On screen:** “Recover · review · debug” / “Replay: no new inference” / “Bring one failing run”.
+
+**Capture direction:** Hold genuine replay or restored-image output beneath the closing ask. The use case is developers investigating failed agent experiments; the measured live runs in this video passed. Do not invent a failure, saved dollars, productivity percentage, or ROI. Live alternatives still require inference.
+
+**Criterion:** Impact Potential; secondary Creativity.
+
+**Evidence/source:** `agent-exports/judges-video-demo/results.json#/results/0/replay` and `#/limitations`; `pi-tape/extensions/tape/controller.ts` — `stubResult`, `isLive`; `image/src/TapeDeck-Server/TdAgentImage.class.st` — `resume`, `compareRun:variant:model:`.
+
+## Capture handoff
+
+`presentation/demo-capture.json`, captured at **19:54:59 UTC on September 26, 2026**, is the current capture index, including the actual patch, tools, request timings, checkpoints, current local image, and prior Atlas proof. It identifies the synthetic voice as **macOS Samantha, not a cloned person**. The raw capture paths above remain available. Keep `docs/demo-evidence.json` unchanged as historical evidence. Do not replace real terminal outcomes with anticipated success lines; preserve the explicit separation between the fresh local experiment and the freshly rechecked, previously downloaded Atlas snapshot.

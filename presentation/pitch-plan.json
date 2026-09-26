@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "tapedeck.pitch/v1",
+  "title": "TapeDeck",
+  "durationSeconds": 60,
+  "spokenWordCount": 132,
+  "wordCountMethod": "Whitespace-delimited words in scenes[].narration only; titles, captions, disclosures, and notes are not spoken.",
+  "timingConvention": "start and end are seconds; start is inclusive, end is exclusive; cuts are contiguous.",
+  "evidenceCapturedAt": "2026-09-26T19:54:59.480Z",
+  "captureIndex": { "path": "presentation/demo-capture.json", "status": "verified", "note": "Current recorded capture index; raw references remain available per scene. docs/demo-evidence.json stays historical." },
+  "rubric": [
+    { "criterion": "Technical Demo", "weightPercent": 35, "primarySceneSeconds": 26 },
+    { "criterion": "Implementation Difficulty", "weightPercent": 30, "primarySceneSeconds": 20 },
+    { "criterion": "Creativity", "weightPercent": 15, "primarySceneSeconds": 6 },
+    { "criterion": "Impact Potential", "weightPercent": 20, "primarySceneSeconds": 8 }
+  ],
+  "allocationNote": "Rubric weights are judging weights, not mandatory runtime percentages. Primary criteria count each second once; secondary mappings carry no additional time.",
+  "proofEngineering": { "sceneIds": [2, 3, 4, 5], "seconds": 46, "percent": 76.66666666666667 },
+  "production": {
+    "format": "Actual captured terminal output, edited for time; no simulated product UI.",
+    "disclosure": "Actual terminal captures · edited for time · synthetic system narration",
+    "persistentLabel": "Terminal capture · synthetic narration",
+    "disclosurePlacement": "Show the full disclosure at the opening and in the video description; retain the short label throughout. These are unspoken production overlays, not terminal output.",
+    "captureStatus": "Fresh Qwen experiment captured September 26, 2026 at 19:51 UTC; earlier Atlas download rechecked/reopened offline at 19:52 UTC. The 19:54 UTC capture index also verifies the current Qwen image. JSON evidence inspected; no video rendered here.",
+    "narrationVoice": "macOS Samantha system voice; not a cloned person",
+    "atlasRetry": {
+      "status": "blocked",
+      "reason": "Network timeouts on all replica servers, per user update on September 26, 2026.",
+      "showLiveCloudAccess": false
+    },
+    "editingRules": [
+      "Use genuine terminal captures; retain source/run IDs and result lines. Trim waits, not outcomes.",
+      "Hold the replay result, MongoDB collections/publication boundary, and offline reopen/hash result legibly. Do not replace proof with title cards.",
+      "Architecture captions explain checked source and the saved manifest; they are not a live Atlas query or a fabricated cloud console.",
+      "Use fresh Qwen counts 4/0/3/4; historical docs/demo-evidence.json records a different 4/0/3/6 experiment and must not supply the current video labels.",
+      "Use actual recorded-run events and report inspection. A formatted projection of JSON is derived evidence, not raw process stdout or a separately executed replay command.",
+      "Show only actual results from the fresh replay/reopen capture. Do not prepopulate a terminal transcript with expected output.",
+      "If a new capture fails, retain its failure or label the earlier saved verification with its timestamp; do not imply fresh success.",
+      "Redact credentials; do not alter counts, hashes, verdicts, errors, or snapshot identity. No cost-savings, ROI, world-first, or model-ranking claims."
+    ]
+  },
+  "evidenceScopes": {
+    "qwenLocal": {
+      "label": "Qwen · local only",
+      "model": "qwen3.5:2b",
+      "task": "t01",
+      "source": "agent-exports/judges-video-demo/results.json",
+      "startedAt": "2026-09-26T19:51:07.942Z",
+      "finishedAt": "2026-09-26T19:51:32.678Z",
+      "calls": { "baseline": 4, "replay": 0, "fork": 3, "fresh": 4 },
+      "baselineRunId": "20260926-195107-t01-vanilla-run-7c7b",
+      "recordedReplayRunId": "20260926-195117-t01-vanilla-replay-7510",
+      "forkRunId": "20260926-195118-t01-rule-taskrunner-fork-e8b0",
+      "freshRunId": "20260926-195124-t01-rule-taskrunner-run-de41",
+      "allLiveVerifiersPassed": true,
+      "replayVerified": true,
+      "replayVerdict": null,
+      "archive": { "runs": 4, "files": 76, "gitBundles": 1 },
+      "image": { "status": "verified", "runs": 4, "files": 76, "gitBundles": 1, "payloadChecksums": 77, "uploadedToAtlas": false, "sha256": "7758fa597665afb7a9c3a8b08ce13ab40eeed3eeda9a3dbd5415fca5f71473a4", "bytes": 63114064, "source": "presentation/demo-capture.json#/localImage" },
+      "identityNote": "The current Qwen image has its own verified identity and 77 checked payloads. It remains local and is not the prior Atlas snapshot."
+    },
+    "priorAtlas": {
+      "label": "Prior Atlas · offline reopen",
+      "snapshotId": "b185069cbeefb5e464e4523d",
+      "verifiedAt": "2026-09-26T19:06:14.492Z",
+      "offlineRecheckedAt": "2026-09-26T19:52:11.672Z",
+      "offlineProof": "agent-exports/video-build/recorded-atlas-proof.json",
+      "liveCloudTransfer": false,
+      "database": "tapedeck",
+      "bucket": "agent_snapshots",
+      "collections": ["agent_snapshots.files", "agent_snapshots.chunks", "agent_snapshots_manifests"],
+      "runs": 32,
+      "files": 491,
+      "gitBundles": 6,
+      "verifiedCompanions": ["image", "archive", "changes", "sources"],
+      "companionHashesMatchSourceAndManifest": true,
+      "downloadedImageReopen": "passed",
+      "isCurrentQwenImage": false
+    }
+  },
+  "scenes": [
+    {
+      "id": 1,
+      "start": 0,
+      "end": 6,
+      "duration": 6,
+      "title": "Save the experiment",
+      "narration": "A failed agent run needs more than chat logs. TapeDeck saves reopenable, executable experiments.",
+      "spokenWordCount": 14,
+      "onScreen": ["Executable agent image", "MongoDB Atlas + Pharo"],
+      "criterionMapping": {
+        "primary": "Creativity",
+        "secondary": ["Impact Potential"],
+        "rationale": "Lead with the developer's failure-recovery pain, then frame the experiment as executable and reopenable rather than another chat transcript; do not claim a world first."
+      },
+      "evidenceRefs": [
+        { "path": "presentation/demo-capture.json", "pointer": "/localImage" },
+        { "path": "presentation/demo-capture.json", "pointer": "/patch" },
+        { "path": "presentation/demo-capture.json", "pointer": "/atlas/restored" }
+      ],
+      "sourceRefs": [
+        { "path": "image/src/TapeDeck-Server/TdAgentImage.class.st", "symbols": ["readArchive:", "saveAs:", "startUp:"] }
+      ],
+      "capture": {
+        "kind": "terminal",
+        "status": "planned",
+        "scopeLabel": "Local image + prior Atlas proof",
+        "direction": "Open on the actual sum-function patch or saved-image evidence in a terminal. Frame failed-agent recovery as the use case, not a fabricated failure of the passing demo. Add the short title, MongoDB/Pharo label, and production disclosure as editorial overlays, not fake application chrome.",
+        "inputs": ["presentation/demo-capture.json"],
+        "mustShow": ["TapeDeck", "MongoDB Atlas", "Pharo image"]
+      }
+    },
+    {
+      "id": 2,
+      "start": 6,
+      "end": 20,
+      "duration": 14,
+      "title": "Replay: zero calls",
+      "narration": "Real local Qwen on a coding task: baseline, four calls; replay, zero; fork, three; fresh run, four. Independently counted. All live verifiers passed. Replay returns recorded behavior, not a new verdict.",
+      "spokenWordCount": 31,
+      "onScreen": ["Qwen 2B · model calls", "Baseline 4 · Replay 0", "Fork 3 · Fresh 4"],
+      "criterionMapping": {
+        "primary": "Technical Demo",
+        "secondary": ["Impact Potential"],
+        "rationale": "Actual strict replay terminal output plus independently measured baseline/replay/fork/fresh results; no new replay verifier verdict."
+      },
+      "evidenceRefs": [
+        { "path": "presentation/demo-capture.json", "pointer": "/local/results/0" },
+        { "path": "presentation/demo-capture.json", "pointer": "/providerRequests" },
+        { "path": "agent-exports/judges-video-demo/results.json", "pointer": "/results/0" },
+        { "path": "agent-exports/judges-video-demo/results.json", "pointer": "/results/0/behavior/baselineReplay" },
+        { "path": "agent-exports/video-build/recorded-run.json", "pointer": "/events" }
+      ],
+      "sourceRefs": [
+        { "path": "runner/src/local-demo.ts", "symbols": ["replayVerified", "providerRequests"] },
+        { "path": "runner/src/local-gateway.ts", "symbols": ["startLocalGateway", "setPhase"] }
+      ],
+      "capture": {
+        "kind": "terminal",
+        "status": "fresh-raw-capture-verified",
+        "scopeLabel": "Qwen · strict replay",
+        "direction": "Spend roughly 10 seconds on actual captured comparison/replay completion and a readable inspection of its replay result, including a long result hold. Use the remaining 4 seconds for the fresh 4/0/3/4 summary. The captured command is local-demo; do not relabel it as a standalone replay invocation.",
+        "inputs": ["agent-exports/video-build/recorded-run.json", "agent-exports/judges-video-demo/results.json", "agent-exports/judges-video-demo/provider-requests.jsonl"],
+        "mustShow": ["Source baseline ID", "Fresh replay ID and status", "Replayed: 4, live: 0, tokens: 0", "Fresh independently counted 4/0/3/4 summary", "Replay has no new verifier verdict"],
+        "guardrail": "Raw local-demo stdout shows replayVerified and live outcomes; detailed counts/IDs come from its results and gateway log. Label any formatted projection as recorded evidence rather than inventing stdout."
+      }
+    },
+    {
+      "id": 3,
+      "start": 20,
+      "end": 30,
+      "duration": 10,
+      "title": "Fork at divergence",
+      "narration": "We intercept requests, record tool outcomes, and checkpoint Git. Divergence stops replay; an explicit fork restores the checkpoint before continuing live.",
+      "spokenWordCount": 21,
+      "onScreen": ["Requests + tool outcomes", "Git checkpoints", "Fork: 1 replayed + 3 live"],
+      "criterionMapping": {
+        "primary": "Implementation Difficulty",
+        "secondary": ["Technical Demo"],
+        "rationale": "Show the provider interception and replay state machine, not generic agent terminology: matched recorded tools, Git restore point, and an explicit live boundary."
+      },
+      "evidenceRefs": [
+        { "path": "presentation/demo-capture.json", "pointer": "/toolCalls" },
+        { "path": "presentation/demo-capture.json", "pointer": "/patch" },
+        { "path": "presentation/demo-capture.json", "pointer": "/checkpoints" },
+        { "path": "agent-exports/judges-video-demo/results.json", "pointer": "/results/0/fork/steps" },
+        { "path": "agent-exports/judges-video-demo/restored-store/runs/20260926-195118-t01-rule-taskrunner-fork-e8b0/tape-report.json", "pointer": "/divergence" }
+      ],
+      "sourceRefs": [
+        { "path": "pi-tape/extensions/tape.ts", "symbols": ["registerProvider"] },
+        { "path": "pi-tape/extensions/tape/controller.ts", "symbols": ["checkRequest", "runTool", "stubResult", "finishStep", "diverge"] },
+        { "path": "pi-tape/src/git.ts", "symbols": ["snapshot", "restore"] }
+      ],
+      "capture": {
+        "kind": "terminal",
+        "status": "saved-evidence-available",
+        "scopeLabel": "Qwen · saved fork proof",
+        "direction": "Use about 4 seconds for actual read/edit/bash tool calls and the sum-function patch, with brief source context for interception; use 6 seconds for the fresh fork report, real restoredSnapshot hash, and action: live. Do not imply the fork is running during playback.",
+        "inputs": ["presentation/demo-capture.json", "agent-exports/judges-video-demo/restored-store/runs/20260926-195118-t01-rule-taskrunner-fork-e8b0/tape-report.json"],
+        "mustShow": ["forkAt: 2", "lenient: [system]", "replayed: 1, live: 3", "kind: forced", "restoredSnapshot", "action: live"],
+        "guardrail": "This fork explicitly permits the changed system prompt; it is not a strict replay under an identical harness."
+      }
+    },
+    {
+      "id": 4,
+      "start": 30,
+      "end": 40,
+      "duration": 10,
+      "title": "MongoDB stores it",
+      "narration": "MongoDB GridFS stores checksummed images and their companions in file and chunk collections. Our manifest collection publishes a snapshot only after every upload succeeds.",
+      "spokenWordCount": 24,
+      "onScreen": ["GridFS: files + chunks", "SHA-256 per companion", "Manifest: publish last"],
+      "criterionMapping": {
+        "primary": "Implementation Difficulty",
+        "secondary": ["Technical Demo"],
+        "rationale": "Make MongoDB concrete: GridFS metadata/chunks, a separate manifest collection, streamed SHA-256/size checks, and publish-after-upload ordering."
+      },
+      "evidenceRefs": [
+        { "path": "docs/demo-evidence.json", "pointer": "/atlas" },
+        { "path": "agent-exports/video-build/recorded-atlas-proof.json", "pointer": "/manifest" }
+      ],
+      "sourceRefs": [
+        { "path": "runner/src/atlas.ts", "symbols": ["GridFSBucket", "putManifest", "publish", "restore"] },
+        { "path": "runner/test/atlas.test.ts", "symbols": ["publishes manifest last", "corrupt, truncated, oversized, or missing GridFS files"] }
+      ],
+      "capture": {
+        "kind": "terminal",
+        "status": "saved-evidence-available",
+        "scopeLabel": "Prior Atlas · saved manifest",
+        "direction": "Spend the full 10 seconds on actual terminal inspection of the prior downloaded manifest and relevant MongoDB source excerpts. Explain the collection roles with large, short overlays; no Atlas browser, live query, upload animation, or invented chunk-count output.",
+        "inputs": ["agent-exports/video-build/recorded-atlas-proof.json", "runner/src/atlas.ts"],
+        "mustShow": ["agent_snapshots.files: file metadata", "agent_snapshots.chunks: binary chunks", "agent_snapshots_manifests: companion IDs, sizes, SHA-256", "putManifest after the upload loop"],
+        "guardrail": "Use the prior snapshot's configured agent_snapshots bucket, not the code's default bucket name. This is source-backed architecture plus saved cloud evidence, not current cloud connectivity."
+      }
+    },
+    {
+      "id": 5,
+      "start": 40,
+      "end": 52,
+      "duration": 12,
+      "title": "Reopen the download",
+      "narration": "Pharo preserves objects and files. This earlier Atlas download reopens with four companion hashes verified. Today’s Qwen image is local; its upload remains blocked.",
+      "spokenWordCount": 24,
+      "onScreen": ["Prior Atlas · offline reopen", "32 runs · 491 files · 6 bundles", "Qwen local: 4 · 76 · 1"],
+      "criterionMapping": {
+        "primary": "Technical Demo",
+        "secondary": ["Creativity", "Impact Potential"],
+        "rationale": "Actual offline hash/reopen proof of a downloaded executable image, with Pharo object and embedded-file persistence; preserve separate snapshot identities."
+      },
+      "evidenceRefs": [
+        { "path": "presentation/demo-capture.json", "pointer": "/localImage" },
+        { "path": "agent-exports/video-build/recorded-atlas-proof.json", "pointer": "/hashes" },
+        { "path": "agent-exports/video-build/recorded-atlas-proof.json", "pointer": "/restored" },
+        { "path": "docs/demo-evidence.json", "pointer": "/atlasSeparateSnapshot" }
+      ],
+      "sourceRefs": [
+        { "path": "image/src/TapeDeck-Server/TdAgentImage.class.st", "symbols": ["readArchive:", "decodedBytes:", "restoreFilesTo:", "resume", "saveAs:"] },
+        { "path": "runner/src/atlas.ts", "symbols": ["restore"] }
+      ],
+      "capture": {
+        "kind": "terminal",
+        "status": "fresh-raw-capture-verified",
+        "scopeLabel": "Prior Atlas · offline reopen",
+        "direction": "Use roughly 4 seconds for the actual rechecked companion hashes and 8 seconds for the captured reopen command/result and restored counts. Hold the recorded 491 file plus 6 bundle checksum result. Keep the Qwen local-only comparison visible as an explicitly separate caption.",
+        "inputs": ["agent-exports/video-build/recorded-atlas-proof.json", "presentation/demo-capture.json", "agent-exports/judges-video-demo/results.json"],
+        "mustShow": ["Prior snapshot ID b185069cbeefb5e464e4523d", "Four companion hashes checked against saved manifest", "Actual downloaded-image reopen outcome", "491 file hashes + 6 bundle hashes passed", "32 runs / 491 files / 6 bundles", "Qwen local-only: 4 runs / 76 files / 1 bundle", "New Atlas upload blocked"],
+        "guardrail": "The archive companion hash covers the published archive bytes (canonical JSON), not arbitrary archive formatting. This fresh offline recheck is not a new upload or download. Do not attach the prior Atlas hashes to either Qwen experiment."
+      }
+    },
+    {
+      "id": 6,
+      "start": 52,
+      "end": 60,
+      "duration": 8,
+      "title": "Debug without rerunning",
+      "narration": "Recover, review, and debug failures without repeating inference during replay. Bring one failing run; test a live alternative.",
+      "spokenWordCount": 18,
+      "onScreen": ["Recover · review · debug", "Replay: no new inference", "Bring one failing run"],
+      "criterionMapping": {
+        "primary": "Impact Potential",
+        "secondary": ["Creativity"],
+        "rationale": "Target developers investigating agent failures: preserve and inspect what happened before paying the compute cost of a deliberate live alternative. No invented ROI."
+      },
+      "evidenceRefs": [
+        { "path": "agent-exports/judges-video-demo/results.json", "pointer": "/results/0/replay" },
+        { "path": "agent-exports/judges-video-demo/results.json", "pointer": "/limitations" }
+      ],
+      "sourceRefs": [
+        { "path": "pi-tape/extensions/tape/controller.ts", "symbols": ["stubResult", "isLive", "diverge"] },
+        { "path": "image/src/TapeDeck-Server/TdAgentImage.class.st", "symbols": ["resume", "compareRun:"] }
+      ],
+      "capture": {
+        "kind": "terminal-with-closing-overlay",
+        "status": "planned",
+        "scopeLabel": "Replay ≠ live continuation",
+        "direction": "Hold the actual restored-image or replay result beneath the closing ask. Do not invent a failed run: the measured baseline, fork, and fresh run passed; failure investigation is the use case.",
+        "inputs": ["presentation/demo-capture.json"],
+        "mustShow": ["No new inference during replay", "Live alternatives still use inference"]
+      }
+    }
+  ]
+}

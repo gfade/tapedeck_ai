@@ -1,0 +1,67 @@
+1
+00:00:00,180 --> 00:00:03,627
+A failed agent run needs more than chat logs.
+
+2
+00:00:03,627 --> 00:00:05,543
+TapeDeck saves reopenable, executable experiments.
+
+3
+00:00:06,180 --> 00:00:10,082
+Real local Qwen on a coding task: baseline, four
+
+4
+00:00:10,082 --> 00:00:13,985
+calls; replay, zero; fork, three; fresh run, four. Independently
+
+5
+00:00:13,985 --> 00:00:17,887
+counted. All live verifiers passed. Replay returns recorded behavior,
+
+6
+00:00:17,887 --> 00:00:19,622
+not a new verdict.
+
+7
+00:00:20,180 --> 00:00:24,098
+We intercept requests, record tool outcomes, and checkpoint Git.
+
+8
+00:00:24,098 --> 00:00:28,015
+Divergence stops replay; an explicit fork restores the checkpoint
+
+9
+00:00:28,015 --> 00:00:29,321
+before continuing live.
+
+10
+00:00:30,180 --> 00:00:33,696
+MongoDB GridFS stores checksummed images and their companions in
+
+11
+00:00:33,696 --> 00:00:37,211
+file and chunk collections. Our manifest collection publishes a
+
+12
+00:00:37,211 --> 00:00:39,555
+snapshot only after every upload succeeds.
+
+13
+00:00:40,180 --> 00:00:44,350
+Pharo preserves objects and files. This earlier Atlas download
+
+14
+00:00:44,350 --> 00:00:48,521
+reopens with four companion hashes verified. Today’s Qwen image
+
+15
+00:00:48,521 --> 00:00:51,301
+is local; its upload remains blocked.
+
+16
+00:00:52,180 --> 00:00:55,807
+Recover, review, and debug failures without repeating inference during
+
+17
+00:00:55,807 --> 00:00:59,433
+replay. Bring one failing run; test a live alternative.
