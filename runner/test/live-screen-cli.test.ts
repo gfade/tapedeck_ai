@@ -15,6 +15,7 @@ test("CLI help exits without creating evidence or requiring a model", () => {
 		const result = spawnSync(process.execPath, [script.pathname, "--cli", "--help", "--output", output], { encoding: "utf8", timeout: 15000 });
 		assert.equal(result.status, 0, result.stderr);
 		assert.match(result.stdout, /CLI exits 0/);
+		assert.match(result.stdout, /--verbose/);
 		assert.equal(existsSync(output), false);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
@@ -33,10 +34,12 @@ test("CLI retains failed evidence and exits nonzero when Ollama is unavailable",
 		const preload = join(directory, "offline.mjs");
 		const output = join(directory, "evidence");
 		writeFileSync(preload, 'globalThis.fetch = async () => { throw new Error("Ollama offline test"); };');
-		const result = spawnSync(process.execPath, ["--import", pathToFileURL(preload).href, script.pathname, "--cli", "--output", output], { encoding: "utf8", timeout: 15000 });
-		assert.equal(result.status, 1, result.stderr);
-		assert.match(result.stdout, /Ollama offline test/);
-		assert.equal(JSON.parse(readFileSync(join(output, "result.json"), "utf8")).status, "error");
+		for (const flags of [[], ["--verbose"]]) {
+			const result = spawnSync(process.execPath, ["--import", pathToFileURL(preload).href, script.pathname, "--cli", ...flags, "--output", output], { encoding: "utf8", timeout: 15000 });
+			assert.equal(result.status, 1, result.stderr);
+			assert.match(result.stdout, /Ollama offline test/);
+			assert.equal(JSON.parse(readFileSync(join(output, "result.json"), "utf8")).status, "error");
+		}
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}

@@ -11,12 +11,13 @@ import { captureArchive, restoreArchive } from "../runner/src/archive.ts";
 import { startLocalGateway } from "../runner/src/local-gateway.ts";
 
 const root = resolve(import.meta.dirname, "..");
-const { values } = parseArgs({ options: { cli: { type: "boolean" }, help: { type: "boolean", short: "h" }, port: { type: "string", default: "4781" }, output: { type: "string" }, "atlas-proof": { type: "string" }, "start-file": { type: "string" } } });
+const { values } = parseArgs({ options: { cli: { type: "boolean" }, verbose: { type: "boolean" }, help: { type: "boolean", short: "h" }, port: { type: "string", default: "4781" }, output: { type: "string" }, "atlas-proof": { type: "string" }, "start-file": { type: "string" } } });
 if (values.help) {
 	console.log(`Usage: npm run demo:cli -- [options]
        npm run demo:screen -- [options]
 
 --cli                 Run immediately in the terminal, without a web UI
+--verbose             Include detailed CLI events (always saved to evidence)
 --output <directory>  Evidence directory (default: new agent-exports directory)
 --atlas-proof <path>  Verify a trusted prior Atlas download; not a live transfer
 --port <number>       Web UI port (default: 4781)
@@ -37,12 +38,13 @@ const token = randomUUID();
 const state: Record<string, any> = { status: "ready", phase: "Ready to run", startedAt: null, finishedAt: null, logs: [], runs: [], replayCalls: null, providerCalls: 0, tools: null, decision: null, task: { title: "t01 · sum() subtracts", failure: null, fix: null, command: null }, atlas: { status: "pending", source: "Prior Atlas download · verification runs now" }, archive: null };
 let activeRunner: Runner | undefined;
 state.triggerMode = Boolean(values["start-file"]);
-const publish = (text: string) => {
+const publish = (text: string, detail = false) => {
 	const event = { at: new Date().toISOString(), text };
 	state.logs.push(event);
-	console.log(text);
+	if (!values.cli || values.verbose || !detail) console.log(text);
 	appendFileSync(join(output, "terminal.jsonl"), JSON.stringify(event) + "\n", { mode: 0o600 });
 };
+const explain = (text: string) => { if (values.cli) publish(text); };
 async function checksum(file: string) {
 	const hash = createHash("sha256");
 	let size = 0;
@@ -57,7 +59,7 @@ async function reopenAtlasImage() {
 	const archive = JSON.parse(readFileSync(join(source, "downloaded", "archive.json"), "utf8"));
 	state.atlas.snapshot = manifest.id;
 	state.atlas.status = "verifying";
-	publish("[GridFS] verify downloaded companions + reopen image");
+	publish("[GridFS] verify downloaded companions + reopen image", true);
 	publish(`Prior Atlas snapshot ${manifest.id} · not a live transfer`);
 	const directory = join(output, "atlas-image");
 	mkdirSync(directory, { mode: 0o700 });
@@ -66,11 +68,11 @@ async function reopenAtlasImage() {
 		const file = kind === "archive" ? join(source, "downloaded", "archive.json") : join(source, "downloaded", "image", item.name);
 		const actual = await checksum(file);
 		if (actual.sha256 !== item.sha256 || actual.size !== item.size) throw new Error("Atlas companion checksum mismatch");
-		publish(`SHA-256 MATCH  ${item.name}  ${actual.sha256.slice(0, 12)}…`);
+		publish(`SHA-256 MATCH  ${item.name}  ${actual.sha256.slice(0, 12)}…`, true);
 		if (kind !== "archive") copyFileSync(file, join(directory, item.name));
 	}
 	const expression = "| agent result | agent := TdAgentImage current. agent lastError ifNotNil: [ self error: agent lastError ]. result := OrderedDictionary new at: 'runs' put: agent store size; at: 'files' put: agent fileNames size; at: 'restoredDirectory' put: agent lastRestoreDirectory; yourself. Stdio stdout nextPutAll: (TdJson toString: result); lf; flush. Smalltalk snapshot: false andQuit: true";
-	publish("$ pharo Agent.image eval 'TdAgentImage current'");
+	publish("$ pharo Agent.image eval 'TdAgentImage current'", true);
 	const environment = Object.fromEntries(Object.entries(process.env).filter(([name]) => !/MONGODB_|API_KEY|TOKEN|SECRET|PASSWORD|TAPEDECK_RESTORE_DIRECTORY/.test(name)));
 	const restored = await new Promise<any>((resolveResult, reject) => {
 		const child = spawn(join(root, "image/pharo/pharo"), [join(directory, manifest.files.image.name), "eval", expression], { env: environment });
@@ -108,18 +110,21 @@ async function runDemo() {
 		writeFileSync(join(output, "models.json"), JSON.stringify(config), { mode: 0o600 });
 		process.env.TAPEDECK_MODELS_FILE = join(output, "models.json");
 		const store = Store.open(join(output, "store"));
-		publish("[runner] evolve(task=t01, user=screen-recording)");
-		publish("REAL EXECUTION · deterministic repair, then local Qwen3.5 2B");
+		publish("[runner] evolve(task=t01, user=screen-recording)", true);
+		publish("REAL EXECUTION · deterministic repair, then local Qwen3.5 2B", true);
 		for (const [label, model] of [["Repair fixture", "scripted/toy"], ["Qwen3.5 2B", "ollama/tapedeck-qwen35-2b"]]) {
 			state.phase = `${label} • record → replay → fork → verify`;
-			if (label === "Qwen3.5 2B") publish("[runner] evolve(model=ollama/tapedeck-qwen35-2b)");
+			explain(label === "Repair fixture"
+				? "\n1 / REPAIR THE WORKFLOW\n  Scripted fixture: sum(2,3) should be 5, not -1.\n  It undoes a correct patch after running a disabled npm test.\n  Trial: use ./tasks test, then verify the patch independently."
+				: "\n2 / TEST LOCAL QWEN\n  Run the real model, then trial fewer directly exposed tools.\n  A passing baseline needs no rescue; bash remains a broad capability.");
+			if (label === "Qwen3.5 2B") publish("[runner] evolve(model=ollama/tapedeck-qwen35-2b)", true);
 			activeRunner = new Runner({ store, model, jobs: 1, timeoutMs: 90_000, log: (line) => {
 				const id = line.split(" ")[1].replace(/:$/, "");
 				const record = store.getRun(id);
 				if (line.startsWith("started")) {
 					gateway!.setPhase(`${label}:${record.kind}`);
 					state.runs.push({ id, label, kind: record.kind, status: "running", pass: null });
-					publish(`▶ ${label.padEnd(14)} ${record.kind.toUpperCase()}  ${id.slice(-4)}`);
+					publish(`▶ ${label.padEnd(14)} ${record.kind.toUpperCase()}  ${id.slice(-4)}`, true);
 				} else {
 					Object.assign(state.runs.find((run: any) => run.id === id), { status: record.status, pass: record.pass, tokens: record.usage.totalTokens, steps: record.steps });
 					if (label === "Repair fixture" && record.kind !== "replay") {
@@ -127,16 +132,20 @@ async function runDemo() {
 						const calls = events.filter((event) => event.type === "tool_execution_start");
 						if (record.pass === false && record.verify?.output.includes("-1 !== 5") && calls.some((call) => call.args?.command === "npm test")) {
 							state.task.failure = "sum(2,3) = -1; expected 5. Disabled npm test → correct patch reverted.";
-							publish("BUG: sum(2,3) returned -1, not 5; npm test was disabled.");
+							publish("BUG: sum(2,3) returned -1, not 5; npm test was disabled.", true);
 						}
 						if (record.pass === true && calls.some((call) => call.args?.command === "./tasks test") && record.verify?.output.includes("hidden checks passed")) {
+							const alreadyExplained = Boolean(state.task.fix);
 							state.task.fix = "return a - b  →  return a + b";
 							state.task.command = "./tasks test (not npm test)";
-							publish("FIX VERIFIED: a - b → a + b; ./tasks test + hidden checks PASS");
+							publish("FIX VERIFIED: a - b → a + b; ./tasks test + hidden checks PASS", alreadyExplained);
 						}
 					}
-					publish(`  ${record.kind.toUpperCase().padEnd(6)} ${record.status === "error" ? "ERROR" : record.pass === null ? "RECORDED" : record.pass ? "PASS" : "FAIL"} · ${record.usage.totalTokens} new tokens`);
 					if (record.kind === "replay") state.replayCalls = gateway!.requests.filter((request) => request.phase.endsWith(":replay")).length;
+					const completedRuns = state.runs.filter((run: any) => run.label === label && run.kind === "run").length;
+					const stage = record.kind === "run" ? completedRuns === 1 ? "BASELINE" : `FRESH ${completedRuns - 1}` : record.kind.toUpperCase();
+					const verdict = record.status === "error" ? "ERROR" : record.pass === null ? "RECORDED" : record.pass ? "PASS" : "FAIL";
+					publish(`  ${values.cli ? stage.padEnd(8) : record.kind.toUpperCase().padEnd(6)} ${verdict} · ${record.kind === "replay" && values.cli ? `${state.replayCalls} model calls (not a new test verdict)` : `${record.usage.totalTokens} new tokens`}`);
 				}
 			} });
 			const result = await evolve(activeRunner, { user: "screen-recording", tasks: ["t01"], repeat: 2 });
@@ -144,11 +153,13 @@ async function runDemo() {
 			state.tools = { before: report.parent.variant.tools, after: report.proposal.profile.variant.tools };
 			state.decision = report.status;
 			publish(`${label}: ${report.status.toUpperCase()} · tools ${state.tools.before.length} → ${state.tools.after.length}`);
-			publish(report.decision.reason);
+			publish(report.decision.reason, report.status === "promoted");
+			if (report.status === "promoted") explain("  Accepted only after the fork and two fresh verifications passed.");
 			if (report.status !== "promoted") throw new Error("Candidate did not promote; retaining its honest evaluation result");
 		}
 		state.phase = "Portable experiment • archive and restore";
-		publish("[archive] captureArchive() → restoreArchive()");
+		explain("\n3 / RECOVER THE EVIDENCE\n  Restore traces, files and Git history; check saved bytes, not claims.");
+		publish("[archive] captureArchive() → restoreArchive()", true);
 		const archive = await captureArchive(store);
 		writeFileSync(join(output, "Agent.archive.json"), JSON.stringify(archive), { mode: 0o600 });
 		const restored = await restoreArchive(archive, join(output, "restored-store"));
@@ -159,6 +170,7 @@ async function runDemo() {
 		state.status = "complete";
 		state.phase = "Proof complete • improve the system, not just the answer";
 		publish("DONE · recorded evidence, bounded adaptation, verified recovery");
+		explain("  This tunes harness configuration, not model weights or arbitrary code.");
 	} catch (error) {
 		state.status = "error";
 		state.phase = "Execution stopped • evidence retained";

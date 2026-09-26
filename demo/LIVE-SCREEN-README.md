@@ -19,9 +19,12 @@ The current UI uses a terminal-style process stream: monospace output, a shell-s
 ```bash
 npm run demo:cli
 npm run demo:cli -- --help
+npm run demo:cli -- --verbose
 ```
 
 The CLI starts immediately, streams actual results, and exits without starting a web UI. Exit code 0 means the proof completed; a rejected candidate or execution error returns 1. The intentionally failed repair-fixture baseline is expected, not an overall failure. Each invocation defaults to a fresh evidence directory printed at startup, containing `terminal.jsonl`, `result.json`, the archive, and restored store. Keep explicit `--output` directories unique between runs.
+
+Default output explains three stages: the scripted repair, real local Qwen evaluation, and evidence recovery. Each run gets one result line; repeated fix messages, run IDs, and individual hashes stay in `terminal.jsonl`. Use `--verbose` to print those details too. Failures remain visible in either mode.
 
 To include checksum verification and reopening of a trusted prior Atlas download:
 
