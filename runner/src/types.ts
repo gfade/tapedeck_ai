@@ -31,6 +31,8 @@ export interface Variant {
 	name: string;
 	description?: string;
 	rules?: string[];
+	context?: { maxToolResultChars: number };
+	tools?: string[];
 	policy?: { denyCommands?: string[]; denyPaths?: string[] };
 	fork?: { lenient?: string[]; at?: ForkRule };
 }

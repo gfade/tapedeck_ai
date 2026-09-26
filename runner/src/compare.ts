@@ -1,13 +1,14 @@
 import { randomUUID } from "node:crypto";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { canonicalJson, normalizeMessage, sha256Hex, substitutePaths, sumUsage } from "../../pi-tape/src/index.ts";
 import { getTask, getVariant } from "./bench.ts";
+import { validateAdaptiveVariant } from "../harness/adaptive-policy.ts";
 import { checkModel, isScripted } from "./pi.ts";
 import type { ForkRequest, Runner, StartedRun } from "./runs.ts";
 import { readBranch, readTapeFromSessionFile } from "./tape.ts";
 import type { RunRecord, Usage } from "./types.ts";
-import { errorMessage, isSafeName, UserError, writeJson } from "./util.ts";
+import { errorMessage, isSafeName, readJson, UserError, writeJson } from "./util.ts";
 
 export interface CompareRequest {
 	from: string;
@@ -201,8 +202,11 @@ export async function compareRun(runner: ComparisonRunner, request: CompareReque
 	const baseline = runner.store.getRun(request.from);
 	if (baseline.id !== request.from || baseline.status !== "done") throw new UserError("comparison baseline must be a completed run");
 	getTask(baseline.task);
-	getVariant(baseline.variant);
-	getVariant(request.variant);
+	const snapshotFile = join(runner.store.runDir(baseline.id), "variant.json");
+	const baselineVariant = existsSync(snapshotFile) ? validateAdaptiveVariant(readJson(snapshotFile)) : getVariant(baseline.variant);
+	if (baselineVariant.name !== baseline.variant) throw new UserError("baseline variant snapshot name mismatch");
+	if (request.variant !== baseline.variant) getVariant(request.variant);
+	const candidateSnapshot = request.variant === baseline.variant && existsSync(snapshotFile) ? { variantSpec: baselineVariant } : {};
 	const baselineTape = readTapeFromSessionFile(join(runner.store.runDir(baseline.id), "session.jsonl"));
 	if (!baselineTape.steps.length) throw new UserError("comparison baseline must contain recorded steps");
 	if (request.forkAt !== undefined && request.forkAt > baselineTape.steps.length) throw new UserError("forkAt exceeds the baseline's recorded steps and cannot guarantee a live fork");
@@ -288,6 +292,7 @@ export async function compareRun(runner: ComparisonRunner, request: CompareReque
 	await execute("replay", () => runner.startReplay({ from: baseline.id, variant: baseline.variant }));
 	const forkRequest: ForkRequest = {
 		...normalizedRequest,
+		...candidateSnapshot,
 		forkAt: request.forkAt ?? (request.auto ? undefined : 1),
 	};
 	const fork = await execute("fork", () => runner.startFork(forkRequest));
@@ -295,7 +300,7 @@ export async function compareRun(runner: ComparisonRunner, request: CompareReque
 		result.notes.push(`Auto fork ${fork.id} never went live; its artifacts are retained. A second fork is forced at step 1 to execute the requested model.`);
 		await execute("fork", () => runner.startFork({ ...forkRequest, forkAt: 1 }));
 	}
-	await execute("rerun", () => runner.startRun({ task: baseline.task, variant: request.variant, model }));
+	await execute("rerun", () => runner.startRun({ task: baseline.task, variant: request.variant, ...candidateSnapshot, model }));
 	const { replay, fork: liveFork, rerun } = result.runs;
 	const outcomes = {
 		baseline: baseline.pass, replay: replay.pass, fork: liveFork.pass, rerun: rerun.pass,

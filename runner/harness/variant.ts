@@ -15,12 +15,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { readFileSync } from "node:fs";
-
-interface VariantFile {
-	name?: string;
-	rules?: string[];
-	policy?: { denyCommands?: string[]; denyPaths?: string[] };
-}
+import { toolAllowed, truncateToolResults, validateAdaptiveVariant } from "./adaptive-policy.ts";
 
 interface Rule {
 	label: string;
@@ -64,7 +59,12 @@ function violation(toolName: string, input: Record<string, unknown>, denyCommand
 export default function variant(pi: ExtensionAPI) {
 	const file = process.env.TAPEDECK_VARIANT;
 	if (!file) return;
-	const spec = JSON.parse(readFileSync(file, "utf8")) as VariantFile;
+	const spec = validateAdaptiveVariant(JSON.parse(readFileSync(file, "utf8")));
+
+	if (spec.context) {
+		const { maxToolResultChars } = spec.context;
+		pi.on("context", (event) => ({ messages: truncateToolResults(event.messages, maxToolResultChars) }));
+	}
 
 	const rules = (spec.rules ?? []).map((rule) => rule.trim()).filter((rule) => rule.length > 0);
 	if (rules.length > 0) {
@@ -76,8 +76,11 @@ export default function variant(pi: ExtensionAPI) {
 
 	const denyCommands = compile("denyCommands", spec.policy?.denyCommands);
 	const denyPaths = compile("denyPaths", spec.policy?.denyPaths);
-	if (denyCommands.length > 0 || denyPaths.length > 0) {
+	if (spec.tools || denyCommands.length > 0 || denyPaths.length > 0) {
 		pi.on("tool_call", (event) => {
+			if (!toolAllowed(event.toolName, spec.tools)) {
+				return { block: true, reason: `Blocked by tapedeck policy: tool ${event.toolName} is not allowed` };
+			}
 			const rule = violation(event.toolName, event.input as Record<string, unknown>, denyCommands, denyPaths);
 			if (rule) return { block: true, reason: `Blocked by tapedeck policy: ${rule}` };
 			return undefined;

@@ -41,7 +41,7 @@ export interface RestoreArchiveOptions extends ArchiveOptions {
 
 export const DEFAULT_ARCHIVE_MAX_BYTES = 256 * 1024 * 1024;
 const DEFAULT_MAX_FILES = 100_000;
-const RUN_FILES = new Set(["run.json", "session.jsonl", "events.jsonl", "stdout.log", "stderr.log", "report.json", "tape-report.json", "verify.json"]);
+const RUN_FILES = new Set(["run.json", "variant.json", "session.jsonl", "events.jsonl", "stdout.log", "stderr.log", "report.json", "tape-report.json", "verify.json"]);
 const OMITTED_DIRECTORIES = new Set([".git", "node_modules", ".pi", ".codex", ".ssh", ".aws"]);
 const HASH = /^[a-f0-9]{64}$/;
 

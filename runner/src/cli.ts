@@ -15,11 +15,14 @@ import { createApiServer } from "./server.ts";
 import { Store } from "./store.ts";
 import { readTapeFromSessionFile } from "./tape.ts";
 import type { RunRecord, Tape } from "./types.ts";
+import { evolveCommand } from "./evolve.ts";
 import { errorMessage, pool, UserError } from "./util.ts";
 
 const USAGE = `tapedeck — record, replay, fork and gate pi runs
 
 Usage:
+  tapedeck evolve --task t01 --task t04 --user NAME         replay, propose, fork, verify, promote a scoped harness
+  tapedeck adaptive-run --task t01 --task t04 --user NAME   use the promoted harness for the same scope
   tapedeck run    --task t01 --variant vanilla [--repeat N]   record full runs
   tapedeck bench  [--task …] [--variant …] [--repeat N]       all tasks x variants (default: all)
   tapedeck replay <runId> --variant V [--tape FILE | --tape-url URL]
@@ -105,6 +108,8 @@ function printRuns(runs: RunRecord[], json: boolean | undefined): void {
 }
 
 async function main(argv: string[]): Promise<number> {
+	const evolved = await evolveCommand(argv);
+	if (evolved !== null) return evolved;
 	const handled = await agentCommand(argv);
 	if (handled !== null) return handled;
 	const { values: flags, positionals } = parseArgs({ args: argv, options: OPTIONS, allowPositionals: true });

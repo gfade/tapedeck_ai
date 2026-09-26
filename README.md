@@ -4,6 +4,19 @@
 
 TapeDeck records a coding agent's work, replays its recorded behavior without new model calls, and forks a session to test a different rule or model. A Pharo `Agent.image` preserves the experiment as live objects together with embedded workspace files and Git checkpoints. MongoDB Atlas stores the image and its companion archive in GridFS.
 
+## Statement One: a self-improving harness
+
+TapeDeck now **automatically proposes, evaluates, and promotes scoped harness policies** from its own recorded traces. It evolves system rules, tool-result context budgets, direct tool access, and additive command guardrails—not arbitrary executable code.
+
+```bash
+node runner/src/cli.ts evolve --home store/adaptive --user judge --task t01 --task t04
+node runner/src/cli.ts adaptive-run --home store/adaptive --user judge --task t01 --task t04
+```
+
+The first command records baselines, proves strict zero-token replay, diagnoses recorded commands, forks a candidate, and independently verifies it twice per task. Only a candidate that passes every fork and fresh run and demonstrates an improvement becomes active. Rejected candidates leave the previous profile unchanged. The second command uses the promoted profile for the same user/task-set/model scope.
+
+**Local Qwen3.5 2B:** prepend `TAPEDECK_MODELS_FILE="$PWD/config/models.ollama.json"` and add `--model ollama/tapedeck-qwen35-2b` to either command after running the local model setup. Profiles, decisions, evaluation traces, and per-run policy snapshots are included in portable archives and therefore in the existing image/Atlas workflow. See [adaptive harness design and demo](docs/ADAPTIVE-HARNESS.md).
+
 ## 60-second hackathon demo
 
 [![Watch the narrated TapeDeck demo](presentation/TapeDeck-60s-Demo-Poster.png)](presentation/TapeDeck-60s-Demo.mp4)

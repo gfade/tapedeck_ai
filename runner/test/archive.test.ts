@@ -75,6 +75,10 @@ async function fixture(dir: string): Promise<{ store: Store; commit: string }> {
 test("archive round trip preserves refs, trace, final files and recorded cwd, but not secrets/worktrees", async (context) => {
 	const dir = workspace(context);
 	const { store, commit } = await fixture(dir);
+	const profile = { name: "adaptive-example", tools: ["read"], context: { maxToolResultChars: 8000 } };
+	writeFileSync(join(store.runDir("recorded"), "variant.json"), JSON.stringify(profile));
+	mkdirSync(join(store.home, "reports", "harness", "example"), { recursive: true });
+	writeFileSync(join(store.home, "reports", "harness", "example", "active.json"), JSON.stringify({ variant: profile }));
 	const archive = await captureArchive(store);
 	assert.equal(archive.format, "tapedeck.archive/v1");
 	assert.equal(archive.gitBundles.length, 1);
@@ -82,6 +86,8 @@ test("archive round trip preserves refs, trace, final files and recorded cwd, bu
 	assert.ok(archive.files.some((file) => file.path === "catalog/variants/vanilla/variant.json"));
 	assert.ok(!archive.files.some((file) => /auth\.json|\/agent\/|^work\/|^repos\/|\.env$/.test(file.path)));
 	const restored = await restoreArchive(archive, join(dir, "restored"));
+	assert.deepEqual(JSON.parse(readFileSync(join(restored.runDir("recorded"), "variant.json"), "utf8")), profile);
+	assert.deepEqual(JSON.parse(readFileSync(join(restored.home, "reports", "harness", "example", "active.json"), "utf8")), { variant: profile });
 	assert.equal(readFileSync(join(restored.home, "snapshots", "recorded", "hello.txt"), "utf8"), "portable\n");
 	assert.equal(statSync(join(restored.home, "snapshots", "recorded", "run.sh")).mode & 0o777, 0o755);
 	assert.equal(await git(["--git-dir", restored.repoDir("unit"), "rev-parse", "refs/tapes/recorded/step-1"]), commit);

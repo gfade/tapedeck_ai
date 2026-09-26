@@ -11,13 +11,14 @@
 
 import { accessSync, constants, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { getTask, getVariant, variantFile } from "./bench.ts";
+import { validateAdaptiveVariant } from "../harness/adaptive-policy.ts";
+import { getTask, getVariant } from "./bench.ts";
 import { addWorktree, ensureTaskRepo, removeWorktree } from "./git.ts";
 import { checkModel, launchPi, modelEnv, piArgs, piEnv, type PiExit, tapeAvailable } from "./pi.ts";
 import type { Store } from "./store.ts";
 import { emptyUsageTotals } from "../../pi-tape/src/index.ts";
 import { customData, forkAtFromRule, hasTape, loadTape, parseTape, readBranch, summarizeSession } from "./tape.ts";
-import type { RunKind, RunRecord, Tape, TapeReport, Task, VerifyResult } from "./types.ts";
+import type { RunKind, RunRecord, Tape, TapeReport, Task, VerifyResult, Variant } from "./types.ts";
 import { cleanEnv, errorMessage, readJson, runProcess, tail, UserError, writeJson } from "./util.ts";
 
 export const DEFAULT_MODEL = "scripted/toy";
@@ -38,6 +39,7 @@ export interface RunnerOptions {
 }
 
 export interface RunRequest {
+	variantSpec?: Variant;
 	task: string;
 	variant: string;
 	model?: string;
@@ -45,6 +47,7 @@ export interface RunRequest {
 }
 
 export interface ReplayRequest {
+	variantSpec?: Variant;
 	from: string;
 	variant: string;
 	/** An inline tape (§4), e.g. an edited one; stored under store/tapes/. */
@@ -68,6 +71,7 @@ export interface StartedRun {
 }
 
 interface Plan {
+	variantSpec: Variant;
 	id: string;
 	kind: RunKind;
 	task: Task;
@@ -115,11 +119,11 @@ export class Runner {
 
 	async startRun(req: RunRequest): Promise<StartedRun> {
 		const task = getTask(req.task);
-		getVariant(req.variant);
+		const variantSpec = this.resolveVariant(req);
 		const model = req.model ?? this.model;
 		checkModel(model);
 		const id = this.store.newRunId(task.id, req.variant, "run");
-		return this.launch({ id, kind: "run", task, variant: req.variant, model, parent: null, forkAt: null, lenient: [], tapeSource: null, keep: Boolean(req.keep) });
+		return this.launch({ id, kind: "run", task, variant: req.variant, variantSpec, model, parent: null, forkAt: null, lenient: [], tapeSource: null, keep: Boolean(req.keep) });
 	}
 
 	async startReplay(req: ReplayRequest): Promise<StartedRun> {
@@ -127,7 +131,7 @@ export class Runner {
 	}
 
 	async startFork(req: ForkRequest): Promise<StartedRun> {
-		const variant = getVariant(req.variant);
+		const variant = this.resolveVariant(req);
 		const plan = await this.planFromTape("fork", req, { model: req.model });
 		plan.lenient = req.lenient ?? (req.auto ? (variant.fork?.lenient ?? []) : []);
 		if (req.forkAt !== undefined && req.forkAt !== null) {
@@ -167,7 +171,7 @@ export class Runner {
 		if (!this.tape) throw new UserError(`${kind}s need pi-tape: pi-tape/extensions/tape.ts is missing or tapes are disabled (--no-tape)`);
 		const parent = this.store.getRun(req.from);
 		const task = getTask(parent.task);
-		getVariant(req.variant);
+		const variantSpec = this.resolveVariant(req);
 		const model = opts.model ?? parent.model;
 		checkModel(model);
 		const id = this.store.newRunId(task.id, req.variant, kind);
@@ -188,12 +192,25 @@ export class Runner {
 				throw new UserError(`run ${parent.id} has no tape (it was recorded without pi-tape)`);
 			}
 		}
-		return { id, kind, task, variant: req.variant, model, parent: parent.id, forkAt: null, lenient: [], tapeSource, keep: Boolean(req.keep) };
+		return { id, kind, task, variant: req.variant, variantSpec, model, parent: parent.id, forkAt: null, lenient: [], tapeSource, keep: Boolean(req.keep) };
+	}
+
+	private resolveVariant(req: { variant: string; variantSpec?: Variant; from?: string }): Variant {
+		if (!/^[A-Za-z0-9_-]+$/.test(req.variant)) throw new UserError("invalid variant name");
+		let spec = req.variantSpec;
+		if (!spec && req.from && this.store.getRun(req.from).variant === req.variant) {
+			const file = join(this.store.runDir(req.from), "variant.json");
+			if (existsSync(file)) spec = readJson<Variant>(file);
+		}
+		spec ??= getVariant(req.variant);
+		if (spec.name !== req.variant) throw new UserError("variantSpec name mismatch");
+		return structuredClone(validateAdaptiveVariant(spec));
 	}
 
 	private launch(plan: Plan): StartedRun {
 		const record = this.initialRecord(plan);
 		this.store.writeRun(record);
+		writeJson(join(this.store.runDir(plan.id), "variant.json"), plan.variantSpec);
 		this.store.claim(plan.id);
 		const controller = new AbortController();
 		this.active.set(plan.id, controller);
@@ -264,7 +281,7 @@ export class Runner {
 				env: piEnv({
 					PI_CODING_AGENT_DIR: join(runDir, "agent"),
 					TAPEDECK_TASK: plan.task.id,
-					TAPEDECK_VARIANT: variantFile(plan.variant),
+					TAPEDECK_VARIANT: join(runDir, "variant.json"),
 					...modelEnv(plan.model),
 					...(this.tape ? this.tapeEnv(plan, reportPath) : {}),
 				}),

@@ -96,6 +96,21 @@ function stubRunner(options: StubOptions = {}) {
 
 const request: CompareRequest = { from: "baseline", variant: "rule-taskrunner", model: "scripted/toy" };
 
+test("comparison reuses an evolved run's policy snapshot without a benchmark variant directory", async (context) => {
+	const stub = stubRunner();
+	context.after(stub.cleanup);
+	stub.baseline.variant = "adaptive-saved";
+	stub.store.writeRun(stub.baseline);
+	const spec = { name: "adaptive-saved", tools: ["read", "bash"], context: { maxToolResultChars: 8000 } };
+	writeFileSync(join(stub.store.runDir("baseline"), "variant.json"), JSON.stringify(spec));
+	const result = await compareRun(stub.runner, { from: "baseline", variant: spec.name, model: "scripted/toy" });
+	assert.equal(result.status, "done");
+	assert.deepEqual(stub.calls[1].request.variantSpec, spec);
+	assert.deepEqual(stub.calls[2].request.variantSpec, spec);
+	writeFileSync(join(stub.store.runDir("baseline"), "variant.json"), JSON.stringify({ ...spec, name: "wrong" }));
+	await assert.rejects(compareRun(stub.runner, { from: "baseline", variant: spec.name, model: "scripted/toy" }), /snapshot name mismatch/);
+});
+
 test("requires an explicit upstream model and safe input before launching anything", async (context) => {
 	const stub = stubRunner();
 	context.after(stub.cleanup);
