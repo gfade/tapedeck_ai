@@ -65,3 +65,6 @@ Choose a new destination. Results can differ across runs. Follow the root README
 ## Submission description
 
 TapeDeck makes coding-agent experiments recoverable. This 60-second demo shows a real local Qwen code fix, independently measured zero-call replay, and a live fork built on Git checkpoints. MongoDB Atlas stores executable Pharo images and their companion archives in GridFS; snapshot manifests link IDs and integrity hashes. The recovery proof reopens a separately verified Atlas download and checks every embedded file and Git bundle. The prototype targets debugging, evaluation, and team handoff. Actual recorded evidence is condensed for readability with disclosed synthetic narration; current Atlas connectivity limits are labeled.
+# New live screen recording
+
+Use **`TapeDeck-Live-60s.mp4`** for the new actual-app demo, not the earlier presentation-style video. See `LIVE-DEMO-TRANSCRIPT.md` for the timed script and exact failed task, fixes, and verification results; `../demo/LIVE-SCREEN-README.md` explains the live app and recording method. `TapeDeck-Live-Unnarrated.mp4` preserves the same full-minute capture without narration.

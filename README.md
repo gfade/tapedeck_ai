@@ -17,7 +17,15 @@ The first command records baselines, proves strict zero-token replay, diagnoses 
 
 **Local Qwen3.5 2B:** prepend `TAPEDECK_MODELS_FILE="$PWD/config/models.ollama.json"` and add `--model ollama/tapedeck-qwen35-2b` to either command after running the local model setup. Profiles, decisions, evaluation traces, and per-run policy snapshots are included in portable archives and therefore in the existing image/Atlas workflow. See [adaptive harness design and demo](docs/ADAPTIVE-HARNESS.md).
 
-## 60-second hackathon demo
+## New: real app screen recording
+
+[![Watch the live TapeDeck app](presentation/TapeDeck-Live-Poster.png)](presentation/TapeDeck-Live-60s.mp4)
+
+[60-second narrated screen demo](presentation/TapeDeck-Live-60s.mp4) · [Unnarrated execution footage](presentation/TapeDeck-Live-Unnarrated.mp4) · [Exact failure, fixes, and transcript](presentation/LIVE-DEMO-TRANSCRIPT.md) · [Run the live app](demo/LIVE-SCREEN-README.md)
+
+This continuous screen recording shows actual execution: `sum(2,3)` fails with `-1`, the harness switches from the disabled `npm test` to `./tasks test`, and the retained addition patch passes a fork and two fresh verifiers. Real local Qwen separately passes with fewer direct tools. The workflow completes in approximately 41.5 seconds; screen capture continues on the actual result page for the rest of the minute. The MongoDB section reopens a prior Atlas download and checks all 497 payloads, not a new cloud transfer.
+
+## Earlier presentation-style hackathon demo
 
 [![Watch the narrated TapeDeck demo](presentation/TapeDeck-60s-Demo-Poster.png)](presentation/TapeDeck-60s-Demo.mp4)
 

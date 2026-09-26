@@ -1,0 +1,8 @@
+[
+  {"start":0,"end":10,"text":"Two plus three should make five. This agent returned minus one. It fixed the code, ran a disabled test command, then undid its fix."},
+  {"start":10,"end":20,"text":"TapeDeck kept the trace. Replay costs no new model calls. The harness learns to use the repository's task runner, not npm test."},
+  {"start":20,"end":31,"text":"The patch is small: add, don't subtract. The proof is not. A fork and two fresh runs pass the real and hidden checks."},
+  {"start":31,"end":42,"text":"Qwen runs locally. Its checks pass with seven direct tools reduced to three. We improve the working system, not just its next answer."},
+  {"start":42,"end":53,"text":"MongoDB GridFS keeps the image, files, and history. This prior Atlas download reopens. Four hundred ninety-seven restored payloads pass fresh checksums."},
+  {"start":53,"end":60,"text":"Keep the evidence. Test the change. Give people a reliable way to improve the tools that help them think."}
+]

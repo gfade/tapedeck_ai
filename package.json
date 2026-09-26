@@ -14,7 +14,8 @@
     "test:agent-image": "node --test runner/integration/agent-image.test.ts",
     "demo": "bash demo/offline-demo.sh",
     "demo:local": "node runner/src/local-demo.ts",
-    "demo:local:setup": "node runner/src/local-demo.ts --setup-only"
+    "demo:local:setup": "node runner/src/local-demo.ts --setup-only",
+    "demo:screen": "node demo/live-screen.ts"
   },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "0.87.1",

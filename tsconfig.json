@@ -12,6 +12,6 @@
     "types": ["node"],
     "lib": ["ES2023", "DOM"]
   },
-  "include": ["pi-tape/**/*.ts", "runner/**/*.ts"],
+  "include": ["pi-tape/**/*.ts", "runner/**/*.ts", "demo/**/*.ts"],
   "exclude": ["**/node_modules/**", "runner/bench/tasks/**/repo/**"]
 }

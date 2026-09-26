@@ -1,0 +1,34 @@
+1
+00:00:00,000 --> 00:00:10,000
+Two plus three should make five. This agent returned
+minus one. It fixed the code, ran a disabled test
+command, then undid its fix.
+
+2
+00:00:10,000 --> 00:00:20,000
+TapeDeck kept the trace. Replay costs no new model
+calls. The harness learns to use the repository's task
+runner, not npm test.
+
+3
+00:00:20,000 --> 00:00:31,000
+The patch is small: add, don't subtract. The proof is
+not. A fork and two fresh runs pass the real and hidden
+checks.
+
+4
+00:00:31,000 --> 00:00:42,000
+Qwen runs locally. Its checks pass with seven direct
+tools reduced to three. We improve the working system,
+not just its next answer.
+
+5
+00:00:42,000 --> 00:00:53,000
+MongoDB GridFS keeps the image, files, and history. This
+prior Atlas download reopens. Four hundred ninety-seven
+restored payloads pass fresh checksums.
+
+6
+00:00:53,000 --> 00:01:00,000
+Keep the evidence. Test the change. Give people a
+reliable way to improve the tools that help them think.

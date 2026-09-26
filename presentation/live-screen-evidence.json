@@ -1,0 +1,524 @@
+{
+  "format": "tapedeck.live-screen-evidence/v1",
+  "capturedAt": "2026-09-26T20:41:32.427Z",
+  "method": "60 seconds of continuous actual browser-viewport screen capture; approximately 8 samples/second with real wall-clock timestamps; no cuts, speedup, reconstructed UI, or substituted stills; final sample covers the normal remaining frame interval",
+  "durationSeconds": 60,
+  "liveFootageSeconds": 60.0,
+  "finalVerifiedResultHoldSeconds": 0.0,
+  "sourceFrames": 480,
+  "sourceDimensions": {
+    "height": 949,
+    "width": 1512
+  },
+  "outputDimensions": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "captureManifestSha256": "6e10d0b1b93cff8699874b8d4e662e69e5428f32041a066970fae3c109ab64b9",
+  "videoSha256": "54f056fd1b340b1614bf9f3e92ab7564753dad94e8c78a787c5f5d576699c95c",
+  "syntheticNarration": {
+    "voice": "macOS Samantha",
+    "writerVoiceClone": false,
+    "timing": [
+      {
+        "start": 0.1,
+        "duration": 8.1175,
+        "tempo": 1,
+        "text": "Two plus three should make five. This agent returned minus one. It fixed the code, ran a disabled test command, then undid its fix."
+      },
+      {
+        "start": 10.1,
+        "duration": 8.241125,
+        "tempo": 1,
+        "text": "TapeDeck kept the trace. Replay costs no new model calls. The harness learns to use the repository's task runner, not npm test."
+      },
+      {
+        "start": 20.1,
+        "duration": 7.085666666666667,
+        "tempo": 1,
+        "text": "The patch is small: add, don't subtract. The proof is not. A fork and two fresh runs pass the real and hidden checks."
+      },
+      {
+        "start": 31.1,
+        "duration": 7.887458333333333,
+        "tempo": 1,
+        "text": "Qwen runs locally. Its checks pass with seven direct tools reduced to three. We improve the working system, not just its next answer."
+      },
+      {
+        "start": 42.1,
+        "duration": 10.137166666666667,
+        "tempo": 1,
+        "text": "MongoDB GridFS keeps the image, files, and history. This prior Atlas download reopens. Four hundred ninety-seven restored payloads pass fresh checksums."
+      },
+      {
+        "start": 53.1,
+        "duration": 5.853916666666667,
+        "tempo": 1,
+        "text": "Keep the evidence. Test the change. Give people a reliable way to improve the tools that help them think."
+      }
+    ]
+  },
+  "result": {
+    "status": "complete",
+    "phase": "Proof complete \u2022 improve the system, not just the answer",
+    "startedAt": "2026-09-26T20:41:32.463Z",
+    "finishedAt": "2026-09-26T20:42:13.913Z",
+    "logs": [
+      {
+        "at": "2026-09-26T20:41:32.493Z",
+        "text": "[runner] evolve(task=t01, user=screen-recording)"
+      },
+      {
+        "at": "2026-09-26T20:41:32.494Z",
+        "text": "REAL EXECUTION \u00b7 deterministic repair, then local Qwen3.5 2B"
+      },
+      {
+        "at": "2026-09-26T20:41:32.496Z",
+        "text": "\u25b6 Repair fixture RUN  2a33"
+      },
+      {
+        "at": "2026-09-26T20:41:33.754Z",
+        "text": "BUG: sum(2,3) returned -1, not 5; npm test was disabled."
+      },
+      {
+        "at": "2026-09-26T20:41:33.754Z",
+        "text": "  RUN    FAIL \u00b7 12405 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:33.756Z",
+        "text": "\u25b6 Repair fixture REPLAY  d953"
+      },
+      {
+        "at": "2026-09-26T20:41:34.126Z",
+        "text": "  REPLAY RECORDED \u00b7 0 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:34.129Z",
+        "text": "\u25b6 Repair fixture FORK  68c2"
+      },
+      {
+        "at": "2026-09-26T20:41:35.697Z",
+        "text": "FIX VERIFIED: a - b \u2192 a + b; ./tasks test + hidden checks PASS"
+      },
+      {
+        "at": "2026-09-26T20:41:35.697Z",
+        "text": "  FORK   PASS \u00b7 10040 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:35.698Z",
+        "text": "\u25b6 Repair fixture RUN  787d"
+      },
+      {
+        "at": "2026-09-26T20:41:36.953Z",
+        "text": "FIX VERIFIED: a - b \u2192 a + b; ./tasks test + hidden checks PASS"
+      },
+      {
+        "at": "2026-09-26T20:41:36.954Z",
+        "text": "  RUN    PASS \u00b7 10040 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:36.955Z",
+        "text": "\u25b6 Repair fixture RUN  2d24"
+      },
+      {
+        "at": "2026-09-26T20:41:38.303Z",
+        "text": "FIX VERIFIED: a - b \u2192 a + b; ./tasks test + hidden checks PASS"
+      },
+      {
+        "at": "2026-09-26T20:41:38.303Z",
+        "text": "  RUN    PASS \u00b7 10040 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:38.304Z",
+        "text": "Repair fixture: PROMOTED \u00b7 tools 7 \u2192 3"
+      },
+      {
+        "at": "2026-09-26T20:41:38.304Z",
+        "text": "Verified failing tasks repaired without evaluation-set regressions."
+      },
+      {
+        "at": "2026-09-26T20:41:38.304Z",
+        "text": "[runner] evolve(model=ollama/tapedeck-qwen35-2b)"
+      },
+      {
+        "at": "2026-09-26T20:41:38.305Z",
+        "text": "\u25b6 Qwen3.5 2B     RUN  91e1"
+      },
+      {
+        "at": "2026-09-26T20:41:48.442Z",
+        "text": "  RUN    PASS \u00b7 8135 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:48.444Z",
+        "text": "\u25b6 Qwen3.5 2B     REPLAY  427d"
+      },
+      {
+        "at": "2026-09-26T20:41:48.874Z",
+        "text": "  REPLAY RECORDED \u00b7 0 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:48.876Z",
+        "text": "\u25b6 Qwen3.5 2B     FORK  8258"
+      },
+      {
+        "at": "2026-09-26T20:41:55.375Z",
+        "text": "  FORK   PASS \u00b7 8213 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:41:55.377Z",
+        "text": "\u25b6 Qwen3.5 2B     RUN  ca12"
+      },
+      {
+        "at": "2026-09-26T20:42:02.034Z",
+        "text": "  RUN    PASS \u00b7 8183 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:42:02.036Z",
+        "text": "\u25b6 Qwen3.5 2B     RUN  21e1"
+      },
+      {
+        "at": "2026-09-26T20:42:08.630Z",
+        "text": "  RUN    PASS \u00b7 8201 new tokens"
+      },
+      {
+        "at": "2026-09-26T20:42:08.632Z",
+        "text": "Qwen3.5 2B: PROMOTED \u00b7 tools 7 \u2192 3"
+      },
+      {
+        "at": "2026-09-26T20:42:08.632Z",
+        "text": "All checks pass with fewer direct tools or at least 5% fewer fresh-run tokens."
+      },
+      {
+        "at": "2026-09-26T20:42:08.632Z",
+        "text": "[archive] captureArchive() \u2192 restoreArchive()"
+      },
+      {
+        "at": "2026-09-26T20:42:12.102Z",
+        "text": "RESTORED 10 new runs \u00b7 176 artifacts \u00b7 1 Git bundle"
+      },
+      {
+        "at": "2026-09-26T20:42:12.107Z",
+        "text": "[GridFS] verify downloaded companions + reopen image"
+      },
+      {
+        "at": "2026-09-26T20:42:12.107Z",
+        "text": "Prior Atlas snapshot b185069cbeefb5e464e4523d \u00b7 not a live transfer"
+      },
+      {
+        "at": "2026-09-26T20:42:12.111Z",
+        "text": "SHA-256 MATCH  archive.json  110e2f979e49\u2026"
+      },
+      {
+        "at": "2026-09-26T20:42:12.146Z",
+        "text": "SHA-256 MATCH  Agent.image  4ed9a1c282c3\u2026"
+      },
+      {
+        "at": "2026-09-26T20:42:12.193Z",
+        "text": "SHA-256 MATCH  Agent.changes  2bda01df7b0b\u2026"
+      },
+      {
+        "at": "2026-09-26T20:42:12.229Z",
+        "text": "SHA-256 MATCH  Pharo13.1-64bit-d7c6f76.sources  4f93dab730de\u2026"
+      },
+      {
+        "at": "2026-09-26T20:42:12.265Z",
+        "text": "$ pharo Agent.image eval 'TdAgentImage current'"
+      },
+      {
+        "at": "2026-09-26T20:42:13.912Z",
+        "text": "IMAGE REOPENED \u00b7 32 runs \u00b7 497/497 payload SHA-256 checks PASS"
+      },
+      {
+        "at": "2026-09-26T20:42:13.913Z",
+        "text": "DONE \u00b7 recorded evidence, bounded adaptation, verified recovery"
+      }
+    ],
+    "runs": [
+      {
+        "id": "20260926-204132-t01-adaptive-base-run-2a33",
+        "label": "Repair fixture",
+        "kind": "run",
+        "status": "done",
+        "pass": false,
+        "tokens": 12405,
+        "steps": {
+          "replayed": 0,
+          "live": 6,
+          "total": 6
+        }
+      },
+      {
+        "id": "20260926-204133-t01-adaptive-base-replay-d953",
+        "label": "Repair fixture",
+        "kind": "replay",
+        "status": "done",
+        "pass": null,
+        "tokens": 0,
+        "steps": {
+          "replayed": 6,
+          "live": 0,
+          "total": 6
+        }
+      },
+      {
+        "id": "20260926-204134-t01-adaptive-dfdaf759-fork-68c2",
+        "label": "Repair fixture",
+        "kind": "fork",
+        "status": "done",
+        "pass": true,
+        "tokens": 10040,
+        "steps": {
+          "replayed": 0,
+          "live": 5,
+          "total": 5
+        }
+      },
+      {
+        "id": "20260926-204135-t01-adaptive-dfdaf759-run-787d",
+        "label": "Repair fixture",
+        "kind": "run",
+        "status": "done",
+        "pass": true,
+        "tokens": 10040,
+        "steps": {
+          "replayed": 0,
+          "live": 5,
+          "total": 5
+        }
+      },
+      {
+        "id": "20260926-204136-t01-adaptive-dfdaf759-run-2d24",
+        "label": "Repair fixture",
+        "kind": "run",
+        "status": "done",
+        "pass": true,
+        "tokens": 10040,
+        "steps": {
+          "replayed": 0,
+          "live": 5,
+          "total": 5
+        }
+      },
+      {
+        "id": "20260926-204138-t01-adaptive-base-run-91e1",
+        "label": "Qwen3.5 2B",
+        "kind": "run",
+        "status": "done",
+        "pass": true,
+        "tokens": 8135,
+        "steps": {
+          "replayed": 0,
+          "live": 4,
+          "total": 4
+        }
+      },
+      {
+        "id": "20260926-204148-t01-adaptive-base-replay-427d",
+        "label": "Qwen3.5 2B",
+        "kind": "replay",
+        "status": "done",
+        "pass": null,
+        "tokens": 0,
+        "steps": {
+          "replayed": 4,
+          "live": 0,
+          "total": 4
+        }
+      },
+      {
+        "id": "20260926-204148-t01-adaptive-6e3b19dc-fork-8258",
+        "label": "Qwen3.5 2B",
+        "kind": "fork",
+        "status": "done",
+        "pass": true,
+        "tokens": 8213,
+        "steps": {
+          "replayed": 0,
+          "live": 4,
+          "total": 4
+        }
+      },
+      {
+        "id": "20260926-204155-t01-adaptive-6e3b19dc-run-ca12",
+        "label": "Qwen3.5 2B",
+        "kind": "run",
+        "status": "done",
+        "pass": true,
+        "tokens": 8183,
+        "steps": {
+          "replayed": 0,
+          "live": 4,
+          "total": 4
+        }
+      },
+      {
+        "id": "20260926-204202-t01-adaptive-6e3b19dc-run-21e1",
+        "label": "Qwen3.5 2B",
+        "kind": "run",
+        "status": "done",
+        "pass": true,
+        "tokens": 8201,
+        "steps": {
+          "replayed": 0,
+          "live": 4,
+          "total": 4
+        }
+      }
+    ],
+    "replayCalls": 0,
+    "providerCalls": 16,
+    "tools": {
+      "before": [
+        "read",
+        "bash",
+        "edit",
+        "write",
+        "grep",
+        "find",
+        "ls"
+      ],
+      "after": [
+        "read",
+        "bash",
+        "edit"
+      ]
+    },
+    "decision": "promoted",
+    "task": {
+      "title": "t01 \u00b7 sum() subtracts",
+      "failure": "sum(2,3) = -1; expected 5. Disabled npm test \u2192 correct patch reverted.",
+      "fix": "return a - b  \u2192  return a + b",
+      "command": "./tasks test (not npm test)"
+    },
+    "atlas": {
+      "status": "verified",
+      "source": "Prior Atlas download \u00b7 verification runs now",
+      "snapshot": "b185069cbeefb5e464e4523d",
+      "payloads": 497,
+      "runs": 32,
+      "files": 491,
+      "imageHash": "4ed9a1c282c36840f09ce8e3806e5446edbecd0fe6e11e465f1a0ab5c121ed1c"
+    },
+    "archive": {
+      "files": 176,
+      "bundles": 1,
+      "runs": 10
+    },
+    "triggerMode": true,
+    "providerRequests": [
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:38.669Z",
+        "status": 200,
+        "durationMs": 5213
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:44.097Z",
+        "status": 200,
+        "durationMs": 1612
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:45.832Z",
+        "status": 200,
+        "durationMs": 1335
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:47.338Z",
+        "status": 200,
+        "durationMs": 971
+      },
+      {
+        "phase": "Qwen3.5 2B:fork",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:49.234Z",
+        "status": 200,
+        "durationMs": 1607
+      },
+      {
+        "phase": "Qwen3.5 2B:fork",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:51.023Z",
+        "status": 200,
+        "durationMs": 1653
+      },
+      {
+        "phase": "Qwen3.5 2B:fork",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:52.797Z",
+        "status": 200,
+        "durationMs": 1442
+      },
+      {
+        "phase": "Qwen3.5 2B:fork",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:54.401Z",
+        "status": 200,
+        "durationMs": 850
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:55.745Z",
+        "status": 200,
+        "durationMs": 1633
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:57.556Z",
+        "status": 200,
+        "durationMs": 1786
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:41:59.465Z",
+        "status": 200,
+        "durationMs": 1393
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:42:01.021Z",
+        "status": 200,
+        "durationMs": 889
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:42:02.414Z",
+        "status": 200,
+        "durationMs": 1617
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:42:04.208Z",
+        "status": 200,
+        "durationMs": 1624
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:42:05.954Z",
+        "status": 200,
+        "durationMs": 1447
+      },
+      {
+        "phase": "Qwen3.5 2B:run",
+        "model": "tapedeck-qwen35-2b",
+        "startedAt": "2026-09-26T20:42:07.564Z",
+        "status": 200,
+        "durationMs": 858
+      }
+    ]
+  }
+}
