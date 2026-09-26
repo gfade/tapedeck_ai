@@ -11,7 +11,24 @@ import { captureArchive, restoreArchive } from "../runner/src/archive.ts";
 import { startLocalGateway } from "../runner/src/local-gateway.ts";
 
 const root = resolve(import.meta.dirname, "..");
-const { values } = parseArgs({ options: { port: { type: "string", default: "4781" }, output: { type: "string" }, "atlas-proof": { type: "string" }, "start-file": { type: "string" } } });
+const { values } = parseArgs({ options: { cli: { type: "boolean" }, help: { type: "boolean", short: "h" }, port: { type: "string", default: "4781" }, output: { type: "string" }, "atlas-proof": { type: "string" }, "start-file": { type: "string" } } });
+if (values.help) {
+	console.log(`Usage: npm run demo:cli -- [options]
+       npm run demo:screen -- [options]
+
+--cli                 Run immediately in the terminal, without a web UI
+--output <directory>  Evidence directory (default: new agent-exports directory)
+--atlas-proof <path>  Verify a trusted prior Atlas download; not a live transfer
+--port <number>       Web UI port (default: 4781)
+--start-file <path>   Web UI recording trigger; incompatible with --cli
+-h, --help            Show this help without running the demo
+
+Requires running Ollama and npm run demo:local:setup.
+CLI exits 0 on completed proof, 1 on failed proof. Evidence: result.json,
+terminal.jsonl, Agent.archive.json, and restored-store in the output directory.`);
+	process.exit(0);
+}
+if (values.cli && values["start-file"]) throw new Error("--cli cannot be combined with --start-file");
 const port = Number(values.port);
 if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("port must be 1024–65535");
 const output = resolve(values.output ?? join(root, "agent-exports", `live-screen-${Date.now()}`));
@@ -167,6 +184,12 @@ const server = createServer((request, response) => {
 		response.writeHead(202).end();
 	} else response.writeHead(404).end();
 });
+for (const signal of ["SIGINT", "SIGTERM"] as const) process.once(signal, () => { activeRunner?.abortAll(); server.close(); process.exitCode = 1; });
+if (values.cli) {
+	console.log(`TapeDeck CLI · evidence: ${output}`);
+	await runDemo();
+	if (state.status !== "complete") process.exitCode = 1;
+} else {
 server.listen(port, "127.0.0.1", () => console.log(`Live app: http://127.0.0.1:${port} · evidence: ${output}`));
 if (values["start-file"]) {
 	const trigger = resolve(values["start-file"]);
@@ -177,4 +200,4 @@ if (values["start-file"]) {
 	}, 100);
 	timer.unref();
 }
-for (const signal of ["SIGINT", "SIGTERM"] as const) process.once(signal, () => { activeRunner?.abortAll(); server.close(); process.exitCode = 1; });
+}

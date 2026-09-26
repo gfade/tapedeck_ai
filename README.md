@@ -19,6 +19,15 @@ The first command records baselines, proves strict zero-token replay, diagnoses 
 
 ## New: real app screen recording
 
+Run the same proof directly in a terminal (after local model setup):
+
+```bash
+npm run demo:cli
+npm run demo:cli -- --help
+```
+
+No browser required. Actual results stream to stdout, evidence is retained, and the command exits nonzero if the proof fails. Optional `--atlas-proof /path/to/verified-download` adds fresh verification of a historical Atlas download, not a new cloud transfer.
+
 [![Watch the live TapeDeck app](presentation/TapeDeck-Live-Poster.png)](presentation/TapeDeck-Live-60s.mp4)
 
 [60-second narrated screen demo](presentation/TapeDeck-Live-60s.mp4) · [Unnarrated execution footage](presentation/TapeDeck-Live-Unnarrated.mp4) · [Exact failure, fixes, and transcript](presentation/LIVE-DEMO-TRANSCRIPT.md) · [Run the live app](demo/LIVE-SCREEN-README.md)

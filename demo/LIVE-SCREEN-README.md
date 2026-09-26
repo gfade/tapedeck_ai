@@ -14,6 +14,25 @@ The current UI uses a terminal-style process stream: monospace output, a shell-s
 
 ## Run it yourself
 
+### Terminal only
+
+```bash
+npm run demo:cli
+npm run demo:cli -- --help
+```
+
+The CLI starts immediately, streams actual results, and exits without starting a web UI. Exit code 0 means the proof completed; a rejected candidate or execution error returns 1. The intentionally failed repair-fixture baseline is expected, not an overall failure. Each invocation defaults to a fresh evidence directory printed at startup, containing `terminal.jsonl`, `result.json`, the archive, and restored store. Keep explicit `--output` directories unique between runs.
+
+To include checksum verification and reopening of a trusted prior Atlas download:
+
+```bash
+npm run demo:cli -- --atlas-proof /absolute/path/to/verified-atlas-download
+```
+
+This checks existing downloaded bytes, not a live Atlas transfer. Without the flag, Atlas verification is explicitly skipped. The model and Pharo prerequisites below still apply. `--start-file` is only available in web mode.
+
+### Web UI
+
 Prerequisites: Node 22.19+, dependencies installed, Git, Ollama, and the configured Qwen3.5 2B alias. Run `npm run demo:local:setup` after installing the model as documented in the main README.
 
 ```bash
