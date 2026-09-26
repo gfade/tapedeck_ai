@@ -1,0 +1,8 @@
+node_modules/
+store/
+*.log
+image/pharo/
+image/*.image
+image/*.changes
+image/*.sources
+.DS_Store

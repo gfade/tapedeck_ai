@@ -1,0 +1,8 @@
+{
+  "name": "guard-secrets",
+  "description": "Tool policy only: deny reading .env files (read, or bash commands such as cat) and downloads with curl or wget.",
+  "policy": {
+    "denyCommands": ["(^|[\\s;&|(])(curl|wget)(\\s|$)"],
+    "denyPaths": ["(^|/)\\.env$"]
+  }
+}

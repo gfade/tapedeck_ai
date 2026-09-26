@@ -1,0 +1,9 @@
+{
+  "name": "slugs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "echo 'npm test is disabled here: run make test' && exit 1"
+  }
+}

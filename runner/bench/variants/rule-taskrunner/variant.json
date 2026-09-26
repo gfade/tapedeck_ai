@@ -1,0 +1,8 @@
+{
+  "name": "rule-taskrunner",
+  "description": "Prompt rule: run tests with the repository's task runner (./tasks test, make test) instead of npm test.",
+  "rules": [
+    "If the repository has a task runner (an executable ./tasks script or a Makefile), run the tests with it (./tasks test or make test), not with npm test. Do any setup it documents first."
+  ],
+  "fork": { "lenient": ["system"], "at": { "tool": "bash", "argMatches": { "command": "^npm " } } }
+}

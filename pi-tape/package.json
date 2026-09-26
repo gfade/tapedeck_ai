@@ -1,0 +1,19 @@
+{
+  "name": "pi-tape",
+  "version": "0.1.0",
+  "description": "pi package: record every run as a tape with git checkpoints, replay it against a patched harness at zero tokens, and fork live from the first step that changes.",
+  "type": "module",
+  "keywords": ["pi-package"],
+  "license": "MIT",
+  "pi": {
+    "extensions": ["./extensions/tape.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-ai": "*",
+    "typebox": "*"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.ts"
+  }
+}

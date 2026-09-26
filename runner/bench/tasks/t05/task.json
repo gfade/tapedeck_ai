@@ -1,0 +1,8 @@
+{
+  "id": "t05",
+  "title": "Typo in the E_TIMEOUT message",
+  "split": "held-out",
+  "quirk": "generated-file",
+  "prompt": "formatError(\"E_TIMEOUT\") in src/errors.js says \"afer\" instead of \"after\". Fix the message and make sure the tests pass.",
+  "verify": "verify.sh"
+}

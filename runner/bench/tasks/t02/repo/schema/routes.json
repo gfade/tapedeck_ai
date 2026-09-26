@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "method": "GET", "path": "/users", "handler": "listUsers" },
+    { "method": "POST", "path": "/users", "handler": "createUser" },
+    { "method": "GET", "path": "/helth", "handler": "health" }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "E_NOT_FOUND": "No such item: {id}",
+  "E_TIMEOUT": "Request timed out afer {seconds}s",
+  "E_FORBIDDEN": "You may not {action} this item"
+}

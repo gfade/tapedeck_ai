@@ -1,0 +1,8 @@
+{
+  "id": "t01",
+  "title": "sum() subtracts",
+  "split": "held-in",
+  "quirk": "test-command",
+  "prompt": "The test for sum() in src/sum.js fails. Fix the bug and make sure the tests pass.",
+  "verify": "verify.sh"
+}

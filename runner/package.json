@@ -1,0 +1,14 @@
+{
+  "name": "tapedeck-runner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Runs pi with pi-tape in disposable git worktrees: record, replay, fork, verify, compare.",
+  "type": "module",
+  "bin": { "tapedeck": "./src/cli.ts" },
+  "scripts": {
+    "test": "node --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "0.87.1"
+  }
+}

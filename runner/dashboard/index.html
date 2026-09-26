@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TapeDeck Runner</title>
+<style>
+:root {
+  --bg: #0d1117; --surface: #161b22; --border: #30363d;
+  --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+  --green: #3fb950; --red: #f85149; --yellow: #d29922;
+  --font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); padding: 1rem; line-height: 1.5; }
+h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: .25rem; }
+.subtitle { color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-bottom: 1.5rem; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+.card h2 { font-size: .95rem; color: var(--accent); margin-bottom: .75rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); font-size: .85rem; }
+th { color: var(--muted); font-weight: 500; }
+.pass { color: var(--green); } .fail { color: var(--red); } .pending { color: var(--yellow); }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: .75rem; font-weight: 600; }
+.badge.ok { background: rgba(63,185,80,.15); color: var(--green); }
+.badge.err { background: rgba(248,81,73,.15); color: var(--red); }
+.badge.run { background: rgba(210,153,34,.15); color: var(--yellow); }
+button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; cursor: pointer; font: inherit; font-size: .85rem; }
+button:hover { opacity: .85; }
+button:disabled { opacity: .4; cursor: default; }
+#error { display: none; background: rgba(248,81,73,.1); border: 1px solid var(--red); color: var(--red); padding: .75rem; border-radius: 6px; margin-bottom: 1rem; }
+.empty { color: var(--muted); font-style: italic; padding: 1rem 0; text-align: center; }
+</style>
+</head>
+<body>
+<h1>TapeDeck Runner</h1>
+<p class="subtitle" id="health">connecting...</p>
+<div id="error"></div>
+
+<div class="grid">
+  <div class="card">
+    <h2>Tasks</h2>
+    <table><thead><tr><th>ID</th><th>Description</th><th>Quirks</th></tr></thead>
+    <tbody id="tasks"><tr><td colspan="3" class="empty">loading...</td></tr></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Variants</h2>
+    <table><thead><tr><th>ID</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody id="variants"><tr><td colspan="3" class="empty">loading...</td></tr></tbody></table>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:1rem">
+  <h2>Runs</h2>
+  <div style="display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap">
+    <button onclick="refresh()">Refresh</button>
+    <select id="filter-kind" onchange="refresh()" style="background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font:inherit;font-size:.85rem">
+      <option value="">all kinds</option>
+      <option value="run">run</option>
+      <option value="replay">replay</option>
+      <option value="fork">fork</option>
+    </select>
+  </div>
+  <table><thead><tr><th>ID</th><th>Kind</th><th>Task</th><th>Variant</th><th>Status</th><th>Pass</th><th>Duration</th></tr></thead>
+  <tbody id="runs"><tr><td colspan="7" class="empty">loading...</td></tr></tbody></table>
+</div>
+
+<div class="card">
+  <h2>Gate Reports</h2>
+  <table><thead><tr><th>Name</th><th>Agreement</th><th>Runs</th></tr></thead>
+  <tbody id="reports"><tr><td colspan="3" class="empty">loading...</td></tr></tbody></table>
+</div>
+
+<script>
+const API = '';
+async function api(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error((await r.json().catch(()=>({}))).error || r.statusText);
+  return r.json();
+}
+function show(id, html) { document.getElementById(id).innerHTML = html; }
+function badge(pass) {
+  if (pass === true) return '<span class="badge ok">PASS</span>';
+  if (pass === false) return '<span class="badge err">FAIL</span>';
+  return '<span class="badge run">???</span>';
+}
+function dur(ms) { return ms == null ? '-' : (ms/1000).toFixed(1)+'s'; }
+
+async function loadHealth() {
+  try {
+    const h = await api('/api/health');
+    document.getElementById('health').textContent =
+      `v${h.version} · pi ${h.pi} · store: ${h.store}`;
+  } catch(e) {
+    document.getElementById('health').textContent = 'offline';
+    const el = document.getElementById('error');
+    el.textContent = `Cannot reach runner: ${e.message}`;
+    el.style.display = 'block';
+  }
+}
+
+async function loadTasks() {
+  try {
+    const tasks = await api('/api/tasks');
+    if (!tasks.length) return show('tasks', '<tr><td colspan="3" class="empty">no tasks</td></tr>');
+    show('tasks', tasks.map(t =>
+      `<tr><td>${t.id}</td><td>${t.description||'-'}</td><td>${(t.quirks||[]).join(', ')||'-'}</td></tr>`
+    ).join(''));
+  } catch {}
+}
+
+async function loadVariants() {
+  try {
+    const vars = await api('/api/variants');
+    if (!vars.length) return show('variants', '<tr><td colspan="3" class="empty">no variants</td></tr>');
+    show('variants', vars.map(v =>
+      `<tr><td>${v.id}</td><td>${v.type||'rules'}</td><td>${v.description||'-'}</td></tr>`
+    ).join(''));
+  } catch {}
+}
+
+async function loadRuns() {
+  try {
+    const kind = document.getElementById('filter-kind').value;
+    const q = kind ? `?kind=${kind}` : '';
+    const runs = await api(`/api/runs${q}`);
+    if (!runs.length) return show('runs', '<tr><td colspan="7" class="empty">no runs</td></tr>');
+    show('runs', runs.map(r =>
+      `<tr><td title="${r.id}">${r.id.slice(0,12)}</td><td>${r.kind}</td><td>${r.task}</td><td>${r.variant}</td>`+
+      `<td>${r.status}</td><td>${badge(r.pass)}</td><td>${dur(r.durationMs)}</td></tr>`
+    ).join(''));
+  } catch {}
+}
+
+async function loadReports() {
+  try {
+    const reps = await api('/api/reports');
+    if (!reps.length) return show('reports', '<tr><td colspan="3" class="empty">no reports</td></tr>');
+    show('reports', reps.map(r =>
+      `<tr><td>${r.name}</td><td>${r.agreement != null ? (r.agreement*100).toFixed(0)+'%' : '-'}</td>`+
+      `<td>${r.runs||'-'}</td></tr>`
+    ).join(''));
+  } catch {}
+}
+
+function refresh() { loadRuns(); loadReports(); }
+loadHealth(); loadTasks(); loadVariants(); refresh();
+</script>
+</body>
+</html>

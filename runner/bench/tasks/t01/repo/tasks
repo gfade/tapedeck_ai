@@ -1,0 +1,7 @@
+#!/bin/sh
+# Task runner for this repository.
+#   ./tasks test    run the test suite
+case "$1" in
+  test) exec node --test --test-reporter=dot ;;
+  *) echo "usage: ./tasks test" >&2; exit 2 ;;
+esac

@@ -1,0 +1,8 @@
+{
+  "id": "t03",
+  "title": "clamp() ignores the upper bound",
+  "split": "held-in",
+  "quirk": "none",
+  "prompt": "clamp() in src/clamp.js ignores the upper bound. Fix it and make sure the tests pass.",
+  "verify": "verify.sh"
+}

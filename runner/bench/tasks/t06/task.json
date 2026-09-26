@@ -1,0 +1,8 @@
+{
+  "id": "t06",
+  "title": "wordCount() miscounts whitespace",
+  "split": "held-out",
+  "quirk": "none",
+  "prompt": "wordCount() in src/words.js returns 1 for an empty string and miscounts repeated spaces. Fix it and make sure the tests pass.",
+  "verify": "verify.sh"
+}
